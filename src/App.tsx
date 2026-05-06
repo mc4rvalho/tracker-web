@@ -62,6 +62,23 @@ export const App = () => {
     }
   };
 
+  // 3.3 O Carteiro da Destruição (Faz o DELETE)
+  const deletarTracker = async (id: string) => {
+    // Um confirm básico só para o usuário não clicar sem querer
+    if (!window.confirm("Tem certeza que deseja excluir este tracker?")) return;
+
+    try {
+      // Bate na rota passando o ID na URL
+      await axios.delete(`http://localhost:4000/tracker/${id}`);
+
+      // Mágica do React com .filter(): "Me devolva todos os trackers, EXCETO o que tem este ID"
+      setTrackers(trackers.filter((tracker) => tracker.id !== id));
+    } catch (erro) {
+      console.error(`Erro ao deletar tracker: ${erro}`);
+      alert("Erro ao excluir! Verifique o console.");
+    }
+  };
+
   // 4. O Desenho na Tela
   return (
     <div>
@@ -123,9 +140,34 @@ export const App = () => {
       <ul>
         {trackers.map((tracker) => (
           // O React exige essa propriedade 'key' para não se perder na lista. Como temos o UUID, ele é perfeito para isso!
-          <li key={tracker.id} style={{ marginBottom: "5px" }}>
-            <strong>{tracker.titulo}</strong> - {tracker.categoria} (Nota:{" "}
-            {tracker.nota})
+          <li
+            key={tracker.id}
+            style={{
+              marginBottom: "10px",
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+            }}
+          >
+            <span>
+              <strong>{tracker.titulo}</strong> - {tracker.categoria} (Nota:{" "}
+              {tracker.nota})
+            </span>
+
+            {/* O Botão de Excluir chamando a função e passando o ID daquele item específico */}
+            <button
+              onClick={() => deletarTracker(tracker.id)}
+              style={{
+                backgroundColor: "#ff4d4f",
+                color: "white",
+                border: "none",
+                padding: "4px 8px",
+                borderRadius: "4px",
+                cursor: "pointer",
+              }}
+            >
+              Excluir
+            </button>
           </li>
         ))}
       </ul>
