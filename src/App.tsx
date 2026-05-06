@@ -1,8 +1,8 @@
-import { useEffect, useState, type FormEvent } from "react";
 import axios from "axios";
-import type { ITracker } from "./types/tracker.interface";
+import { useEffect, useState, type FormEvent } from "react";
 import { TrackerForm } from "./components/TrackerForm";
 import { TrackerList } from "./components/TrackerList";
+import type { ITracker } from "./types/tracker.interface";
 
 export const App = () => {
   // 1. OS ESTADOS (A Memória do React)
@@ -16,7 +16,9 @@ export const App = () => {
   useEffect(() => {
     const buscarTrackers = async () => {
       try {
-        const resposta = await axios.get("http://localhost:4000/tracker");
+        const resposta = await axios.get(
+          "https://tracker-api-7krq.onrender.com/tracker",
+        );
         setTrackers(resposta.data);
       } catch (erro) {
         console.error(`Erro ao buscar os trackers: ${erro}`);
@@ -42,7 +44,8 @@ export const App = () => {
       if (idEmEdicao) {
         // Modo Edição (PATCH)
         const resposta = await axios.patch(
-          `http://localhost:4000/tracker/${idEmEdicao}, payload`,
+          `https://tracker-api-7krq.onrender.com/tracker/${idEmEdicao}`,
+          payload,
         );
 
         // Atualiza apenas o item modificado na lista
@@ -54,7 +57,7 @@ export const App = () => {
       } else {
         // Modo Criação (POST)
         const resposta = await axios.post(
-          "http://localhost:4000/tracker",
+          "https://tracker-api-7krq.onrender.com/tracker",
           payload,
         );
 
@@ -78,7 +81,7 @@ export const App = () => {
     if (!window.confirm("Tem certeza que deseja excluir este tracker?")) return;
 
     try {
-      await axios.delete(`http://localhost:4000/tracker/${id}`);
+      await axios.delete(`https://tracker-api-7krq.onrender.com/tracker/${id}`);
       setTrackers(trackers.filter((tracker) => tracker.id !== id));
     } catch (erro) {
       console.error(`Erro ao deletar tracker: ${erro}`);
