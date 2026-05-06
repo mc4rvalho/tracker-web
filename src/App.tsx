@@ -1,93 +1,84 @@
 import { useEffect, useState, type FormEvent } from "react";
-import "./App.css";
-import type { ITracker } from "./types/tracker.interface";
 import axios from "axios";
+import type { ITracker } from "./types/tracker.interface";
+import { TrackerForm } from "./components/TrackerForm";
+import { TrackerList } from "./components/TrackerList";
 
 export const App = () => {
-  // 1. O Estado: Observe como a Interface entra aqui!
-  // O TypeScript agora sabe que 'trackers' não é um array qualquer, é um array de Trackers <ITracker[]>
+  // 1. OS ESTADOS (A Memória do React)
   const [trackers, setTrackers] = useState<ITracker[]>([]);
-
-  // 1.1 Novos Estados: Um para cada campo do formulário
   const [titulo, setTitulo] = useState("");
   const [categoria, setCategoria] = useState("Série");
   const [nota, setNota] = useState<number | "">("");
   const [idEmEdicao, setIdEmEdicao] = useState<string | null>(null);
 
-  // 2. O Gatilho
+  // 2. O GATILHO (Busca inicial no banco)
   useEffect(() => {
-    // 3. O Carteiro (A função que faz o GET)
     const buscarTrackers = async () => {
       try {
-        // Lembra que configuramos o app.enableCors() no NestJS ontem? É isso que permite essa chamada funcionar!
         const resposta = await axios.get("http://localhost:4000/tracker");
-
-        // Coloca os dados que vieram do Back-end dentro do nosso estado
         setTrackers(resposta.data);
       } catch (erro) {
-        console.log(`Erro ao buscar os trackers: ${erro}`);
+        console.error(`Erro ao buscar os trackers: ${erro}`);
       }
     };
 
     buscarTrackers();
   }, []);
 
-  // 2.2 O Carteiro de Entra (A função que faz o POST)
+  // 3. AS FUNÇÕES DE NEGÓCIO (O CRUD)
+
+  // O Carteiro Inteligente (Cria ou Atualiza)
   const salvarTracker = async (e: FormEvent) => {
-    e.preventDefault(); // Impede a página de piscar/recarregar quando clica em Salvar
+    e.preventDefault();
 
     try {
-      // Montamos o "pacote" (DTO) para o Back-end
       const payload = {
         titulo: titulo,
         categoria: categoria,
-        nota: Number(nota), // Convertendo para número para o Class Validator/Prisma não reclamar!
+        nota: Number(nota),
       };
 
       if (idEmEdicao) {
-        // MODO EDIÇÃO: Bate na rota de PATCH passando o ID na URL
+        // Modo Edição (PATCH)
         const resposta = await axios.patch(
-          `http://localhost:4000/tracker/${idEmEdicao}`,
-          payload,
+          `http://localhost:4000/tracker/${idEmEdicao}, payload`,
         );
 
-        // Mágica do React com .map(): Percorre a lista. Se achar o tracker que estávamos editando,
-        // substitui ele pelos dados novos que voltaram da API. Se não, mantém o tracker antigo.
+        // Atualiza apenas o item modificado na lista
         setTrackers(
           trackers.map((tracker) =>
             tracker.id === idEmEdicao ? resposta.data : tracker,
           ),
         );
       } else {
-        // Mandamos para a mesma rota, mas agora usando POST
+        // Modo Criação (POST)
         const resposta = await axios.post(
           "http://localhost:4000/tracker",
           payload,
         );
+
+        // Adiciona o novo item no final da lista
         setTrackers([...trackers, resposta.data]);
       }
 
-      // Limpa os campos do formulário para o próximo cadastro
+      // Limpa os campos após salvar
       setTitulo("");
       setCategoria("Série");
       setNota("");
       setIdEmEdicao(null);
     } catch (erro) {
-      console.error(`Erro ao criar tracker ${erro}`);
-      alert("Erro ao criar! Verifique o console.");
+      console.error(`Erro ao salvar tracker: ${erro}`);
+      alert("Erro ao salvar! Verifique o console.");
     }
   };
 
-  // 3.3 O Carteiro da Destruição (Faz o DELETE)
+  // O Destruidor (DELETE)
   const deletarTracker = async (id: string) => {
-    // Um confirm básico só para o usuário não clicar sem querer
     if (!window.confirm("Tem certeza que deseja excluir este tracker?")) return;
 
     try {
-      // Bate na rota passando o ID na URL
       await axios.delete(`http://localhost:4000/tracker/${id}`);
-
-      // Mágica do React com .filter(): "Me devolva todos os trackers, EXCETO o que tem este ID"
       setTrackers(trackers.filter((tracker) => tracker.id !== id));
     } catch (erro) {
       console.error(`Erro ao deletar tracker: ${erro}`);
@@ -95,7 +86,7 @@ export const App = () => {
     }
   };
 
-  // 4. O Preparador de Edição
+  // O Preparador (joga os dados do item para dentro do formulário)
   const prepararEdicao = (tracker: ITracker) => {
     setIdEmEdicao(tracker.id);
     setTitulo(tracker.titulo);
@@ -103,121 +94,31 @@ export const App = () => {
     setNota(tracker.nota);
   };
 
-  // 4. O Desenho na Tela
+  // 4. A INTERFACE (O HTML com Tailwind e Componentes)
   return (
-    <div>
-      <h1>My Tracker</h1>
+    <div className="min-h-screen bg-gray-50 px-4 py-10">
+      <div className="mx-auto max-w-2xl">
+        <h1 className="mb-8 text-center text-3xl font-extrabold tracking-tight text-blue-600">
+          My Tracker
+        </h1>
 
-      {/* 3.3 O nosso Formulário HTML */}
-      <form
-        onSubmit={salvarTracker}
-        style={{
-          marginBottom: "30px",
-          padding: "15px",
-          border: "1px solid #ddd",
-          borderRadius: "8px",
-        }}
-      >
-        <h3>{idEmEdicao ? "Editar Tracker" : "Adicionar Novo"}</h3>
+        <TrackerForm
+          titulo={titulo}
+          setTitulo={setTitulo}
+          categoria={categoria}
+          setCategoria={setCategoria}
+          nota={nota}
+          setNota={setNota}
+          salvarTracker={salvarTracker}
+          idEmEdicao={idEmEdicao}
+        />
 
-        <div style={{ marginBottom: "10px" }}>
-          <label>Titulo: </label>
-          <input
-            type="text"
-            value={titulo}
-            onChange={(e) => setTitulo(e.target.value)}
-            required
-          />
-        </div>
-
-        <div style={{ marginBottom: "10px" }}>
-          <label>Categoria: </label>
-          <select
-            value={categoria}
-            onChange={(e) => setCategoria(e.target.value)}
-          >
-            <option value="Série">Série</option>
-            <option value="Filme">Filme</option>
-            <option value="Jogo">Jogo</option>
-          </select>
-        </div>
-
-        <div style={{ marginBottom: "10px" }}>
-          <label>Nota (0 a 10): </label>
-          <input
-            type="number"
-            min="0"
-            max="10"
-            value={nota}
-            onChange={(e) =>
-              setNota(e.target.value === "" ? "" : Number(e.target.value))
-            }
-          />
-        </div>
-
-        <button type="submit">
-          {idEmEdicao ? "Atualizar" : "Salvar no Banco"}
-        </button>
-      </form>
-
-      <hr />
-
-      {/* O Mágico .map() em ação */}
-      <ul>
-        {trackers.map((tracker) => (
-          // O React exige essa propriedade 'key' para não se perder na lista. Como temos o UUID, ele é perfeito para isso!
-          <li
-            key={tracker.id}
-            style={{
-              marginBottom: "10px",
-              display: "flex",
-              alignItems: "center",
-              gap: "10px",
-            }}
-          >
-            <span>
-              <strong>{tracker.titulo}</strong> - {tracker.categoria} (Nota:{" "}
-              {tracker.nota})
-            </span>
-
-            {/* O Botão de Excluir chamando a função e passando o ID daquele item específico */}
-            <button
-              onClick={() => deletarTracker(tracker.id)}
-              style={{
-                backgroundColor: "#ff4d4f",
-                color: "white",
-                border: "none",
-                padding: "4px 8px",
-                borderRadius: "4px",
-                cursor: "pointer",
-              }}
-            >
-              Excluir
-            </button>
-
-            {/* Novo Botão de Editar */}
-            <button
-              onClick={() => prepararEdicao(tracker)}
-              style={{
-                backgroundColor: "#faad14",
-                color: "white",
-                border: "none",
-                padding: "4px 8px",
-                borderRadius: "4px",
-                cursor: "pointer",
-                marginRight: "5px",
-              }}
-            >
-              Editar
-            </button>
-          </li>
-        ))}
-      </ul>
-
-      {/* Dica visual extra: se o array estiver vazio, mostramos um aviso */}
-      {trackers.length === 0 && (
-        <p>Nenhum tracker encontrado no banco de dados.</p>
-      )}
+        <TrackerList
+          trackers={trackers}
+          prepararEdicao={prepararEdicao}
+          deletarTracker={deletarTracker}
+        />
+      </div>
     </div>
   );
 };
