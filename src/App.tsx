@@ -12,6 +12,7 @@ export const App = () => {
   const [titulo, setTitulo] = useState("");
   const [categoria, setCategoria] = useState("Série");
   const [nota, setNota] = useState<number | "">("");
+  const [idEmEdicao, setIdEmEdicao] = useState<string | null>(null);
 
   // 2. O Gatilho
   useEffect(() => {
@@ -32,30 +33,45 @@ export const App = () => {
   }, []);
 
   // 2.2 O Carteiro de Entra (A função que faz o POST)
-  const criarTracker = async (e: FormEvent) => {
+  const salvarTracker = async (e: FormEvent) => {
     e.preventDefault(); // Impede a página de piscar/recarregar quando clica em Salvar
 
     try {
       // Montamos o "pacote" (DTO) para o Back-end
-      const novoTracker = {
+      const payload = {
         titulo: titulo,
         categoria: categoria,
         nota: Number(nota), // Convertendo para número para o Class Validator/Prisma não reclamar!
       };
 
-      // Mandamos para a mesma rota, mas agora usando POST
-      const resposta = await axios.post(
-        "http://localhost:4000/tracker",
-        novoTracker,
-      );
+      if (idEmEdicao) {
+        // MODO EDIÇÃO: Bate na rota de PATCH passando o ID na URL
+        const resposta = await axios.patch(
+          `http://localhost:4000/tracker/${idEmEdicao}`,
+          payload,
+        );
 
-      // Mágica do React: Pegamos a lista antiga de trackers, e adicionamos o novo que voltou do banco
-      setTrackers([...trackers, resposta.data]);
+        // Mágica do React com .map(): Percorre a lista. Se achar o tracker que estávamos editando,
+        // substitui ele pelos dados novos que voltaram da API. Se não, mantém o tracker antigo.
+        setTrackers(
+          trackers.map((tracker) =>
+            tracker.id === idEmEdicao ? resposta.data : tracker,
+          ),
+        );
+      } else {
+        // Mandamos para a mesma rota, mas agora usando POST
+        const resposta = await axios.post(
+          "http://localhost:4000/tracker",
+          payload,
+        );
+        setTrackers([...trackers, resposta.data]);
+      }
 
       // Limpa os campos do formulário para o próximo cadastro
       setTitulo("");
       setCategoria("Série");
       setNota("");
+      setIdEmEdicao(null);
     } catch (erro) {
       console.error(`Erro ao criar tracker ${erro}`);
       alert("Erro ao criar! Verifique o console.");
@@ -79,6 +95,14 @@ export const App = () => {
     }
   };
 
+  // 4. O Preparador de Edição
+  const prepararEdicao = (tracker: ITracker) => {
+    setIdEmEdicao(tracker.id);
+    setTitulo(tracker.titulo);
+    setCategoria(tracker.categoria);
+    setNota(tracker.nota);
+  };
+
   // 4. O Desenho na Tela
   return (
     <div>
@@ -86,7 +110,7 @@ export const App = () => {
 
       {/* 3.3 O nosso Formulário HTML */}
       <form
-        onSubmit={criarTracker}
+        onSubmit={salvarTracker}
         style={{
           marginBottom: "30px",
           padding: "15px",
@@ -94,7 +118,7 @@ export const App = () => {
           borderRadius: "8px",
         }}
       >
-        <h3>Adicionar Novo</h3>
+        <h3>{idEmEdicao ? "Editar Tracker" : "Adicionar Novo"}</h3>
 
         <div style={{ marginBottom: "10px" }}>
           <label>Titulo: </label>
@@ -131,7 +155,9 @@ export const App = () => {
           />
         </div>
 
-        <button type="submit">Salvar no Banco</button>
+        <button type="submit">
+          {idEmEdicao ? "Atualizar" : "Salvar no Banco"}
+        </button>
       </form>
 
       <hr />
@@ -167,6 +193,22 @@ export const App = () => {
               }}
             >
               Excluir
+            </button>
+
+            {/* Novo Botão de Editar */}
+            <button
+              onClick={() => prepararEdicao(tracker)}
+              style={{
+                backgroundColor: "#faad14",
+                color: "white",
+                border: "none",
+                padding: "4px 8px",
+                borderRadius: "4px",
+                cursor: "pointer",
+                marginRight: "5px",
+              }}
+            >
+              Editar
             </button>
           </li>
         ))}
