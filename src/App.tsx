@@ -54,7 +54,7 @@ export const App = () => {
 
       // Limpa os campos do formulário para o próximo cadastro
       setTitulo("");
-      setCategoria("");
+      setCategoria("Série");
       setNota("");
     } catch (erro) {
       console.error(`Erro ao criar tracker ${erro}`);
