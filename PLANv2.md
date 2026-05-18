@@ -32,14 +32,15 @@ Implementação da inteligência de agregação de dados no servidor.
 - [x] **Filtros e Contagem**: Contagem exata de itens agrupados por status (`WISHLIST`, `IN_PROGRESS`, `FINISHED`).
 - [x] **Ranqueamento de Tags**: Algoritmo para ranquear os gêneros favoritos com base na repetição de tags.
 - [x] **Histórico de Atividade**: Busca dos últimos itens interagidos para a seção "Continuar de onde parou".
+- [ ] **Documentação Interativa (Swagger)**: Configuração do `@nestjs/swagger` no `main.ts` e adição dos decoradores (Decorators) nos Controllers para documentar todas as rotas e DTOs criados até agora.
 
 ## 🎨 Sprint 4: O Espetáculo Visual (React + Tailwind)
 
 _Onde a lógica do servidor ganha vida e interatividade._
 
 - [x] **Dark/Light Mode**: Implementação de tema dinâmico (Tailwind `dark:` classes). Vamos configurar uma paleta noturna elegante, puxando para tons de um Tokyo Night ou One Dark Pro, para deixar a interface super imersiva e agradável.
-- [ ] **Camada de Serviços (API Connection)**: Configurar as chamadas HTTP (usando `fetch` ou Axios) no React para bater nos nossos endpoints `/dashboard/*` recém-criados e guardar os dados no estado da aplicação.
-- [ ] **Dashboard UI (Totais)**: Criação dos Cards numéricos no topo da tela consumindo os totais de páginas, horas e episódios, e um gráfico de pizza/donut simples para a distribuição de status (`IN_PROGRESS`, `FINISHED`, etc).
+- [x] **Camada de Serviços (API Connection)**: Configurar as chamadas HTTP (usando `fetch` ou Axios) no React para bater nos nossos endpoints `/dashboard/*` recém-criados e guardar os dados no estado da aplicação.
+- [x] **Dashboard UI (Totais)**: Criação dos Cards numéricos no topo da tela consumindo os totais de páginas, horas e episódios, e um gráfico de pizza/donut simples para a distribuição de status (`IN_PROGRESS`, `FINISHED`, etc).
 - [ ] **Componentes de Progresso**: Barras visuais e circulares para exibir a relação "atual vs total" dentro dos cards individuais de livros, jogos e séries.
 - [ ] **Seção de Atividades Recentes**: Um componente de Timeline ou Lista Vertical para exibir o array de `/recent`, criando um ícone ou cor diferente dinamicamente dependendo do `type` (`GAME`, `BOOK`, `MOVIE`, `SERIES`).
 - [ ] **Dashboard UI (Analytics)**: Uma seção dedicada aos "Insights", exibindo a sua Média Geral (`averageGrade`) com algumas estrelas animadas e um gráfico ou pódio em lista para exibir o seu array `topGenres`.

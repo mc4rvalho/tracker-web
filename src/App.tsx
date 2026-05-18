@@ -5,6 +5,7 @@ import { TrackerForm } from "./components/TrackerForm";
 import { TrackerList } from "./components/TrackerList";
 import type { ITracker } from "./types/tracker.interface";
 import { dashboardService } from "./services/api";
+import { DashboardCards } from "./components/DashboardCards";
 
 export const App = () => {
   // 1. OS ESTADOS (A Memória do React)
@@ -151,6 +152,12 @@ export const App = () => {
         >
           Mudar para {theme === "light" ? "Escuro" : "Claro"}
         </button>
+
+        <DashboardCards
+          totals={totals}
+          recents={recents}
+          analytics={analytics}
+        />
 
         <TrackerForm
           titulo={titulo}
