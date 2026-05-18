@@ -37,7 +37,7 @@ Implementação da inteligência de agregação de dados no servidor.
 
 _Onde a lógica do servidor ganha vida e interatividade._
 
-- [ ] **Dark/Light Mode**: Implementação de tema dinâmico (Tailwind `dark:` classes). Vamos configurar uma paleta noturna elegante, puxando para tons de um Tokyo Night ou One Dark Pro, para deixar a interface super imersiva e agradável.
+- [x] **Dark/Light Mode**: Implementação de tema dinâmico (Tailwind `dark:` classes). Vamos configurar uma paleta noturna elegante, puxando para tons de um Tokyo Night ou One Dark Pro, para deixar a interface super imersiva e agradável.
 - [ ] **Camada de Serviços (API Connection)**: Configurar as chamadas HTTP (usando `fetch` ou Axios) no React para bater nos nossos endpoints `/dashboard/*` recém-criados e guardar os dados no estado da aplicação.
 - [ ] **Dashboard UI (Totais)**: Criação dos Cards numéricos no topo da tela consumindo os totais de páginas, horas e episódios, e um gráfico de pizza/donut simples para a distribuição de status (`IN_PROGRESS`, `FINISHED`, etc).
 - [ ] **Componentes de Progresso**: Barras visuais e circulares para exibir a relação "atual vs total" dentro dos cards individuais de livros, jogos e séries.
