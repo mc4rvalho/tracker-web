@@ -6,6 +6,7 @@ import { TrackerList } from "./components/TrackerList";
 import type { ITracker } from "./types/tracker.interface";
 import { dashboardService } from "./services/api";
 import { DashboardCards } from "./components/DashboardCards";
+import { RecentTimeline } from "./components/RecentTimeline";
 
 export const App = () => {
   // OS ESTADOS (A Memória do React)
@@ -171,6 +172,8 @@ export const App = () => {
           recents={recents}
           analytics={analytics}
         />
+
+        <RecentTimeline recents={recents} />
 
         <TrackerForm
           title={title}
