@@ -8,12 +8,12 @@ import { dashboardService } from "./services/api";
 import { DashboardCards } from "./components/DashboardCards";
 
 export const App = () => {
-  // 1. OS ESTADOS (A Memória do React)
+  // OS ESTADOS (A Memória do React)
   const [trackers, setTrackers] = useState<ITracker[]>([]);
-  const [titulo, setTitulo] = useState("");
-  const [categoria, setCategoria] = useState("Série");
-  const [nota, setNota] = useState<number | "">("");
-  const [idEmEdicao, setIdEmEdicao] = useState<string | null>(null);
+  const [title, setTitle] = useState("");
+  const [category, setCategory] = useState("Series");
+  const [grade, setGrade] = useState<number | "">("");
+  const [idInEdition, setIdEmEdicao] = useState<string | null>(null);
 
   // Light/Dark Mode - useState
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
@@ -22,6 +22,16 @@ export const App = () => {
   const [totals, setTotals] = useState<any>(null);
   const [recents, setRecents] = useState<any>(null);
   const [analytics, setAnalytics] = useState<any>(null);
+
+  // Componente de Progresso - useState
+  const [episodesWatched, setEpisodesWatched] = useState<number | "">("");
+  const [totalEpisodesWatched, setTotalEpisodesWatched] = useState<number | "">(
+    "",
+  );
+  const [hoursPlayed, setHoursPlayed] = useState<number | "">("");
+  const [totalHoursPlayed, setTotalHoursPlayed] = useState<number | "">("");
+  const [readPages, setReadPages] = useState<number | "">("");
+  const [totalReadPages, setTotalReadPages] = useState<number | "">("");
 
   // Light/Dark Mode - useEffect
   useEffect(() => {
@@ -32,7 +42,7 @@ export const App = () => {
     localStorage.setItem("theme", theme);
   }, [theme]);
 
-  // 2. O GATILHO (Busca inicial no banco)
+  // O GATILHO (Busca inicial no banco)
   useEffect(() => {
     const buscarTrackers = async () => {
       try {
@@ -72,27 +82,30 @@ export const App = () => {
   // 3. AS FUNÇÕES DE NEGÓCIO (O CRUD)
 
   // O Carteiro Inteligente (Cria ou Atualiza)
-  const salvarTracker = async (e: FormEvent) => {
+  const saveTracker = async (e: FormEvent) => {
     e.preventDefault();
 
     try {
       const payload = {
-        titulo: titulo,
-        categoria: categoria,
-        nota: Number(nota),
+        title: title,
+        category: category,
+        grade: Number(grade),
+        episodesWatched: episodesWatched,
+        hoursPlayed: hoursPlayed,
+        readPages: readPages,
       };
 
-      if (idEmEdicao) {
+      if (idInEdition) {
         // Modo Edição (PATCH)
         const resposta = await axios.patch(
-          `https://tracker-api-7krq.onrender.com/tracker/${idEmEdicao}`,
+          `https://tracker-api-7krq.onrender.com/tracker/${idInEdition}`,
           payload,
         );
 
         // Atualiza apenas o item modificado na lista
         setTrackers(
           trackers.map((tracker) =>
-            tracker.id === idEmEdicao ? resposta.data : tracker,
+            tracker.id === idInEdition ? resposta.data : tracker,
           ),
         );
       } else {
@@ -107,9 +120,9 @@ export const App = () => {
       }
 
       // Limpa os campos após salvar
-      setTitulo("");
-      setCategoria("Série");
-      setNota("");
+      setTitle("");
+      setCategory("Série");
+      setGrade("");
       setIdEmEdicao(null);
     } catch (erro) {
       console.error(`Erro ao salvar tracker: ${erro}`);
@@ -133,9 +146,9 @@ export const App = () => {
   // O Preparador (joga os dados do item para dentro do formulário)
   const prepararEdicao = (tracker: ITracker) => {
     setIdEmEdicao(tracker.id);
-    setTitulo(tracker.titulo);
-    setCategoria(tracker.categoria);
-    setNota(tracker.nota);
+    setTitle(tracker.title);
+    setCategory(tracker.category);
+    setGrade(tracker.grade);
   };
 
   // 4. A INTERFACE (O HTML com Tailwind e Componentes)
@@ -160,14 +173,26 @@ export const App = () => {
         />
 
         <TrackerForm
-          titulo={titulo}
-          setTitulo={setTitulo}
-          categoria={categoria}
-          setCategoria={setCategoria}
-          nota={nota}
-          setNota={setNota}
-          salvarTracker={salvarTracker}
-          idEmEdicao={idEmEdicao}
+          title={title}
+          setTitle={setTitle}
+          category={category}
+          setCategory={setCategory}
+          grade={grade}
+          setGrade={setGrade}
+          saveTracker={saveTracker}
+          idInEdition={idInEdition}
+          episodesWatched={episodesWatched}
+          setEpisodesWatched={setEpisodesWatched}
+          totalEpisodesWatched={totalEpisodesWatched}
+          setTotalEpisodesWatched={setTotalEpisodesWatched}
+          hoursPlayed={hoursPlayed}
+          setHoursPlayed={setHoursPlayed}
+          totalHoursPlayed={totalHoursPlayed}
+          setTotalHoursPlayed={setTotalHoursPlayed}
+          readPages={readPages}
+          setReadPages={setReadPages}
+          totalReadPages={totalReadPages}
+          setTotalReadPages={setTotalReadPages}
         />
 
         <TrackerList

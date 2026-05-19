@@ -1,6 +1,12 @@
 export interface ITracker {
   id: string;
-  titulo: string;
-  categoria: string;
-  nota: number;
+  title: string;
+  category: string;
+  grade: number;
+  episodesWatched?: number;
+  totalEpisodesWatched?: number;
+  hoursPlayed?: number;
+  totalHoursPlayed?: number;
+  readPages?: number;
+  totalReadPages?: number;
 }
