@@ -44,7 +44,7 @@ _Onde a lógica do servidor ganha vida e interatividade._
 - [x] **Componentes de Progresso**: Barras visuais e circulares para exibir a relação "atual vs total" dentro dos cards individuais de livros, jogos e séries.
 - [x] **Seção de Atividades Recentes**: Um componente de Timeline ou Lista Vertical para exibir o array de `/recent`, criando um ícone ou cor diferente dinamicamente dependendo do `type` (`GAME`, `BOOK`, `MOVIE`, `SERIES`).
 - [x] **Dashboard UI (Analytics)**: Uma seção dedicada aos "Insights", exibindo a sua Média Geral (`averageGrade`) com algumas estrelas animadas e um gráfico ou pódio em lista para exibir o seu array `topGenres`.
-- [ ] **Tratamento de UX (Loading & Empty States)**: Criar Skeleton Loaders (aquelas barras cinzas piscando) enquanto o React espera a API devolver os dados, e telas de "Você ainda não tem itens recentes" para quando os arrays vierem vazios.
+- [x] **Tratamento de UX (Loading & Empty States)**: Criar Skeleton Loaders (aquelas barras cinzas piscando) enquanto o React espera a API devolver os dados, e telas de "Você ainda não tem itens recentes" para quando os arrays vierem vazios.
 
 ## 🔐 Sprint 5: Sistema de Autenticação (Auth & JWT)
 

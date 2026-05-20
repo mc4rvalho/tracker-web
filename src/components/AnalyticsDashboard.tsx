@@ -11,7 +11,13 @@ interface AnalyticsProps {
 export const AnalyticsDashboard = ({ analytics }: AnalyticsProps) => {
   if (!analytics) {
     return (
-      <p className="py-4 text-center text-gray-500">Carregando análises...</p>
+      <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2">
+        {/* Esqueleto do Cartão 1 (Média) */}
+        <div className="flex h-32 animate-pulse flex-col items-center justify-center rounded-xl bg-gray-200 shadow-sm dark:bg-gray-800"></div>
+
+        {/* Esqueleto do Cartão 2 (Gêneros) */}
+        <div className="flex h-32 animate-pulse flex-col items-center justify-center rounded-xl bg-gray-200 shadow-sm dark:bg-gray-800"></div>
+      </div>
     );
   }
 
