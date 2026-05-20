@@ -1,7 +1,17 @@
 import axios from "axios";
 
-const api = axios.create({
+export const api = axios.create({
   baseURL: "https://tracker-api-7krq.onrender.com",
+});
+
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("@Tracker:token");
+
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+
+  return config;
 });
 
 export const dashboardService = {
