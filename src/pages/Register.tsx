@@ -1,30 +1,32 @@
 import { useState, type FormEvent } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
+import { useNavigate, Link } from "react-router-dom";
+import { api } from "../services/api";
 
-export const Login = () => {
+export const Register = () => {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleLogin = async (e: FormEvent) => {
+  const handleRegister = async (e: FormEvent) => {
     e.preventDefault();
     setError("");
     setIsLoading(true);
 
     try {
-      // Chama o nosso cérebro de Auth
-      await login(email, password);
+      const payload = { name, email, password };
 
-      // Se não der erro, redireciona pro Dashboard!
-      navigate("/");
+      await api.post("/users", payload);
+
+      alert("Conta criada com sucesso! Faça login para continuar.");
+
+      navigate("/login");
     } catch (err) {
       console.error(err);
-      setError("Credenciais inválidas. Verifique seu e-mail e senha.");
+      setError("Erro ao criar conta. Verifique os dados e tente novamente.");
     } finally {
       setIsLoading(false);
     }
@@ -35,23 +37,14 @@ export const Login = () => {
       <div className="w-full max-w-md space-y-8 rounded-xl bg-white p-10 shadow-xl dark:bg-gray-900">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold tracking-tight text-blue-600">
-            My Tracker
+            Criar Conta
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
-            Faça login para acessar o seu painel
+            Preencha os dados para começar a usar o My Tracker
           </p>
         </div>
 
-        <div className="text-center text-sm">
-          <Link
-            className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400"
-            to="/register"
-          >
-            Não tem uma conta? Cadastre-se aqui.
-          </Link>
-        </div>
-
-        <form className="mt-8 space-y-6" onSubmit={handleLogin}>
+        <form className="mt-8 space-y-6" onSubmit={handleRegister}>
           {error && (
             <div className="rounded-md bg-red-50 p-4 text-sm text-red-500 dark:bg-red-900/30 dark:text-red-400">
               {error}
@@ -59,6 +52,22 @@ export const Login = () => {
           )}
 
           <div className="space-y-4 rounded-md shadow-sm">
+            {/* Input de Nome */}
+            <div>
+              <label className="sr-only" htmlFor="name">
+                Nome
+              </label>
+              <input
+                id="name"
+                type="text"
+                required
+                className="relative block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:ring-blue-500 focus:outline-none sm:text-sm dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"
+                placeholder="Nome completo"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </div>
+            {/* Input de E-mail */}
             <div>
               <label className="sr-only" htmlFor="email-address">
                 E-mail
@@ -73,6 +82,7 @@ export const Login = () => {
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
+            {/* Input de Senha */}
             <div>
               <label className="sr-only" htmlFor="password">
                 Senha
@@ -95,13 +105,20 @@ export const Login = () => {
               disabled={isLoading}
               className="group relative flex w-full justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-70"
             >
-              {isLoading ? "Entrando..." : "Entrar"}
+              {isLoading ? "Criando..." : "Cadastrar"}
             </button>
+          </div>
+
+          <div className="text-center text-sm">
+            <Link
+              to="/login"
+              className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400"
+            >
+              Já tem uma conta? Faça login
+            </Link>
           </div>
         </form>
       </div>
     </div>
   );
 };
-
-// A tela de Login precisa de um link ou botão novo lá embaixo dizendo algo como: "Não tem uma conta? Cadastre-se aqui". Esse botão deve redirecionar o usuário para a rota "/register". Você pode usar o componente <Link to="/register"> do react-router-dom ou o próprio useNavigate.

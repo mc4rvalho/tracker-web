@@ -50,8 +50,19 @@ _Onde a lógica do servidor ganha vida e interatividade._
 
 Foco em proteger a aplicação, garantindo que cada usuário só veja os seus próprios dados.
 
-- [ ] **Segurança de Senhas**: Instalar o `bcrypt` para criptografar as senhas antes de salvar no banco.
-- [ ] **Módulo de Auth (NestJS)**: Criar as rotas de Registro e Login gerando um token JWT (JSON Web Token).
-- [ ] **Proteção de Rotas (Guards)**: Bloquear o acesso aos endpoints do Tracker para quem não enviar um Token válido.
-- [ ] **Telas de Acesso (React)**: Desenvolver as páginas de Login e Cadastro no Front-end.
-- [ ] **Integração do Token**: Configurar o Axios para enviar o JWT no "Header" de todas as requisições.
+- [x] **Segurança de Senhas**: Instalar o `bcrypt` para criptografar as senhas antes de salvar no banco.
+- [x] **Módulo de Auth (NestJS)**: Criar as rotas de Registro e Login gerando um token JWT (JSON Web Token).
+- [x] **Proteção de Rotas (Guards)**: Bloquear o acesso aos endpoints do Tracker para quem não enviar um Token válido.
+- [x] **Telas de Acesso (React)**: Desenvolver as páginas de Login e Cadastro no Front-end.
+- [x] **Integração do Token**: Configurar o Axios para enviar o JWT no "Header" de todas as requisições.
+- [ ] **Integração com APIs Externas (Busca)**: Conectar o front-end às rotas de busca do back-end para auto-preencher o formulário com capas e dados oficiais (TMDB, RAWG, Open Library).
+
+## 🎨 Sprint 6: UI/UX Polish (Lifting Visual)
+
+Foco total na experiência do usuário, design system e refatoração visual com Tailwind CSS para deixar a aplicação com cara de produto premium.
+
+- [ ] **Design System & Tipografia**: Padronizar paleta de cores (variáveis globais), fontes e espaçamentos no arquivo `tailwind.config.ts`.
+- [ ] **Refatoração de Layouts**: Ajustar alinhamentos, paddings e responsividade (Mobile First) de todas as telas (Cards, Formulários e Dashboard).
+- [ ] **Empty States & Assets Ilustrativos**: Adicionar SVGs ou imagens amigáveis para os estados vazios (ex: ilustrações quando não houver trackers salvos).
+- [ ] **Microinterações e Animações**: Adicionar efeitos de `hover`, transições suaves (`transition-all`), e *toasts/snackbars* para feedback de sucesso ou erro nas ações do usuário.
+- [ ] **Revisão do Dark Mode**: Garantir que o contraste das cores no tema escuro atenda às normas de acessibilidade (WCAG).

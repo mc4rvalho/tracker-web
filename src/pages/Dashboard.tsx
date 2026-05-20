@@ -7,6 +7,7 @@ import { api, dashboardService } from "../services/api";
 import { DashboardCards } from "../components/DashboardCards";
 import { RecentTimeline } from "../components/RecentTimeline";
 import { AnalyticsDashboard } from "../components/AnalyticsDashboard";
+import { useAuth } from "../contexts/AuthContext";
 
 export const Dashboard = () => {
   const [trackers, setTrackers] = useState<ITracker[]>([]);
@@ -29,6 +30,8 @@ export const Dashboard = () => {
   const [totalHoursPlayed, setTotalHoursPlayed] = useState<number | "">("");
   const [readPages, setReadPages] = useState<number | "">("");
   const [totalReadPages, setTotalReadPages] = useState<number | "">("");
+
+  const { logout } = useAuth();
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
@@ -135,6 +138,13 @@ export const Dashboard = () => {
           Mudar para {theme === "light" ? "Escuro" : "Claro"}
         </button>
 
+        <button
+          className="mb-4 rounded-md bg-white p-10 text-black shadow-md dark:bg-gray-900 dark:text-white"
+          onClick={logout}
+        >
+          Sair
+        </button>
+
         <DashboardCards
           totals={totals}
           recents={recents}
@@ -177,3 +187,7 @@ export const Dashboard = () => {
     </div>
   );
 };
+
+// O seu desafio é unir essas três peças. Dê uma olhada em como você fez o api.post no seu Dashboard.tsx para se inspirar na sintaxe, monte a tela, e teste o fluxo criando um usuário "teste@teste.com".
+
+// Me avise quando terminar ou se o terminal do Vite gritar algum erro no meio do caminho. Mãos à obra! 💻🛠️

@@ -3,6 +3,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { Dashboard } from "./pages/Dashboard";
 import { Login } from "./pages/Login";
+import { Register } from "./pages/Register";
 
 export const App = () => {
   return (
@@ -11,6 +12,7 @@ export const App = () => {
         <Routes>
           {/* Rota Pública */}
           <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
 
           {/* Rota Privada */}
           <Route
