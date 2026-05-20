@@ -7,6 +7,7 @@ import type { ITracker } from "./types/tracker.interface";
 import { dashboardService } from "./services/api";
 import { DashboardCards } from "./components/DashboardCards";
 import { RecentTimeline } from "./components/RecentTimeline";
+import { AnalyticsDashboard } from "./components/AnalyticsDashboard";
 
 export const App = () => {
   // OS ESTADOS (A Memória do React)
@@ -172,6 +173,8 @@ export const App = () => {
           recents={recents}
           analytics={analytics}
         />
+
+        <AnalyticsDashboard analytics={analytics} />
 
         <RecentTimeline recents={recents} />
 

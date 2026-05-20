@@ -32,7 +32,7 @@ Implementação da inteligência de agregação de dados no servidor.
 - [x] **Filtros e Contagem**: Contagem exata de itens agrupados por status (`WISHLIST`, `IN_PROGRESS`, `FINISHED`).
 - [x] **Ranqueamento de Tags**: Algoritmo para ranquear os gêneros favoritos com base na repetição de tags.
 - [x] **Histórico de Atividade**: Busca dos últimos itens interagidos para a seção "Continuar de onde parou".
-- [ ] **Documentação Interativa (Swagger)**: Configuração do `@nestjs/swagger` no `main.ts` e adição dos decoradores (Decorators) nos Controllers para documentar todas as rotas e DTOs criados até agora.
+- [x] **Documentação Interativa (Swagger)**: Configuração do `@nestjs/swagger` no `main.ts` e adição dos decoradores (Decorators) nos Controllers para documentar todas as rotas e DTOs criados até agora.
 
 ## 🎨 Sprint 4: O Espetáculo Visual (React + Tailwind)
 
@@ -43,7 +43,7 @@ _Onde a lógica do servidor ganha vida e interatividade._
 - [x] **Dashboard UI (Totais)**: Criação dos Cards numéricos no topo da tela consumindo os totais de páginas, horas e episódios, e um gráfico de pizza/donut simples para a distribuição de status (`IN_PROGRESS`, `FINISHED`, etc).
 - [x] **Componentes de Progresso**: Barras visuais e circulares para exibir a relação "atual vs total" dentro dos cards individuais de livros, jogos e séries.
 - [x] **Seção de Atividades Recentes**: Um componente de Timeline ou Lista Vertical para exibir o array de `/recent`, criando um ícone ou cor diferente dinamicamente dependendo do `type` (`GAME`, `BOOK`, `MOVIE`, `SERIES`).
-- [ ] **Dashboard UI (Analytics)**: Uma seção dedicada aos "Insights", exibindo a sua Média Geral (`averageGrade`) com algumas estrelas animadas e um gráfico ou pódio em lista para exibir o seu array `topGenres`.
+- [x] **Dashboard UI (Analytics)**: Uma seção dedicada aos "Insights", exibindo a sua Média Geral (`averageGrade`) com algumas estrelas animadas e um gráfico ou pódio em lista para exibir o seu array `topGenres`.
 - [ ] **Tratamento de UX (Loading & Empty States)**: Criar Skeleton Loaders (aquelas barras cinzas piscando) enquanto o React espera a API devolver os dados, e telas de "Você ainda não tem itens recentes" para quando os arrays vierem vazios.
 
 ## 🔐 Sprint 5: Sistema de Autenticação (Auth & JWT)
