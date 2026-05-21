@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type { FormEvent } from "react";
+import { useEffect, useRef, type FormEvent } from "react";
 import { api } from "../services/api";
 
 interface FormProps {
@@ -27,8 +27,7 @@ interface FormProps {
   setPosterPath: (v: string) => void;
   search: any[];
   setSearch: (v: any[]) => void;
-  isSearching: boolean;
-  setIsSearching: (v: boolean) => void;
+  setExternalId: (v: number | string) => void;
 }
 
 export const TrackerForm = ({
@@ -56,37 +55,60 @@ export const TrackerForm = ({
   setPosterPath,
   search,
   setSearch,
-  isSearching,
-  setIsSearching,
+  setExternalId,
 }: FormProps) => {
-  const handleSearch = async () => {
-    if (!title) {
-      return;
-    }
+  const skipSearchRef = useRef(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
-    setIsSearching(true);
+  const handleSearch = async () => {
+    if (!title) return;
 
     let route = "";
-    if (category === "Series") {
-      route = `/series/search?title=${title}`;
-    } else if (category === "Movie") {
-      route = `/movies/search?title=${title}`;
-    } else if (category === "Game") {
-      route = `/games/search?title=${title}`;
-    } else if (category === "Book") {
-      route = `/books/search?title=${title}`;
-    }
+    if (category === "Series") route = `/series/search?title=${title}`;
+    else if (category === "Movie") route = `/movies/search?title=${title}`;
+    else if (category === "Game") route = `/games/search?title=${title}`;
+    else if (category === "Book") route = `/books/search?title=${title}`;
 
     try {
       const response = await api.get(route);
-
       setSearch(response.data);
     } catch (err) {
       console.error("Erro na busca externa!", err);
-    } finally {
-      setIsSearching(false);
     }
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setSearch([]);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [setSearch]);
+
+  useEffect(() => {
+    if (!title) {
+      setSearch([]);
+      return;
+    }
+
+    if (skipSearchRef.current) {
+      skipSearchRef.current = false;
+      return;
+    }
+
+    const timeoutId = setTimeout(() => {
+      handleSearch();
+    }, 600);
+
+    return () => clearTimeout(timeoutId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [title, category]);
 
   return (
     <form
@@ -97,8 +119,8 @@ export const TrackerForm = ({
         {idInEdition ? "✏️ Editar Tracker" : "✨ Adicionar Novo"}
       </h3>
 
-      <div className="relative flex flex-col gap-4">
-        <div>
+      <div className="flex flex-col gap-4">
+        <div ref={dropdownRef} className="relative">
           {posterPath && (
             <div className="mb-2 flex justify-center sm:justify-start">
               <img
@@ -117,62 +139,60 @@ export const TrackerForm = ({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               className="w-full rounded-lg border border-gray-300 p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              placeholder="Supernatural"
+              placeholder="Digite para buscar automaticamente..."
               required
             />
           </div>
 
-          <button
-            type="button"
-            onClick={handleSearch}
-            disabled={isSearching || !title}
-            className="rounded-lg bg-blue-600 px-4 py-2 text-white"
-          >
-            {isSearching ? "Buscando..." : "Buscar"}
-          </button>
-        </div>
+          {search.length > 0 && (
+            <div className="ring-opacity-5 absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black focus:outline-none sm:text-sm">
+              {search.map((item, index) => (
+                <div
+                  key={index}
+                  className="relative cursor-pointer py-2 pr-9 pl-3 text-gray-900 select-none hover:bg-blue-600 hover:text-white"
+                  onClick={() => {
+                    skipSearchRef.current = true;
 
-        {/* Renderização Condicional do Dropdown de Busca */}
-        {search.length > 0 && (
-          <div className="ring-opacity-5 absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black focus:outline-none sm:text-sm">
-            {search.map((item, index) => (
-              <div
-                key={index}
-                className="relative cursor-pointer py-2 pr-9 pl-3 text-gray-900 select-none hover:bg-blue-600 hover:text-white"
-                onClick={() => {
-                  setTitle(item.title || item.name);
-                  setPosterPath(item.poster_path);
-                  setSearch([]);
-                }}
-              >
-                <div className="flex items-center">
-                  {item.poster_path ? (
-                    <img
-                      src={`https://image.tmdb.org/t/p/w92${item.poster_path}`}
-                      alt={item.title || item.name}
-                      className="mr-3 h-12 w-8 shrink-0 object-cover"
-                    />
-                  ) : (
-                    <div className="mr-3 h-12 w-8 bg-gray-200"></div>
-                  )}
+                    setTitle(item.title || item.name);
+                    setPosterPath(item.poster_path);
+                    setExternalId(item.id);
 
-                  <div className="flex flex-col">
-                    <span className="block truncate font-normal">
-                      {item.title || item.name}
-                    </span>
-                    <span className="block truncate text-xs opacity-70">
-                      {item.release_date || item.first_air_date
-                        ? new Date(
-                            item.release_date || item.first_air_date,
-                          ).getFullYear()
-                        : "Ano desconhecido"}
-                    </span>
+                    if (category === "Series" && item.number_of_episodes) {
+                      setTotalEpisodesWatched(item.number_of_episodes);
+                    }
+
+                    setSearch([]);
+                  }}
+                >
+                  <div className="flex items-center">
+                    {item.poster_path ? (
+                      <img
+                        src={`https://image.tmdb.org/t/p/w92${item.poster_path}`}
+                        alt={item.title || item.name}
+                        className="mr-3 h-12 w-8 shrink-0 object-cover"
+                      />
+                    ) : (
+                      <div className="mr-3 h-12 w-8 bg-gray-200"></div>
+                    )}
+
+                    <div className="flex flex-col">
+                      <span className="block truncate font-normal">
+                        {item.title || item.name}
+                      </span>
+                      <span className="block truncate text-xs opacity-70">
+                        {item.release_date || item.first_air_date
+                          ? new Date(
+                              item.release_date || item.first_air_date,
+                            ).getFullYear()
+                          : "Ano desconhecido"}
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        )}
+              ))}
+            </div>
+          )}
+        </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div>

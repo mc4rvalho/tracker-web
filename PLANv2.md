@@ -55,7 +55,7 @@ Foco em proteger a aplicação, garantindo que cada usuário só veja os seus pr
 - [x] **Proteção de Rotas (Guards)**: Bloquear o acesso aos endpoints do Tracker para quem não enviar um Token válido.
 - [x] **Telas de Acesso (React)**: Desenvolver as páginas de Login e Cadastro no Front-end.
 - [x] **Integração do Token**: Configurar o Axios para enviar o JWT no "Header" de todas as requisições.
-- [ ] **Integração com APIs Externas (Busca)**: Conectar o front-end às rotas de busca do back-end para auto-preencher o formulário com capas e dados oficiais (TMDB, RAWG, Open Library).
+- [x] **Integração com APIs Externas (Busca)**: Conectar o front-end às rotas de busca do back-end para auto-preencher o formulário com capas e dados oficiais (TMDB, RAWG, Open Library).
 
 ## 🎨 Sprint 6: UI/UX Polish (Lifting Visual)
 

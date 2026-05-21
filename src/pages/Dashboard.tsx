@@ -31,9 +31,11 @@ export const Dashboard = () => {
   const [readPages, setReadPages] = useState<number | "">("");
   const [totalReadPages, setTotalReadPages] = useState<number | "">("");
 
+  const [tags, setTags] = useState<string[]>([]);
+  const [externalId, setExternalId] = useState<number | string>("");
+
   const [posterPath, setPosterPath] = useState("");
   const [search, setSearch] = useState<any[]>([]);
-  const [isSearching, setIsSearching] = useState<boolean>(false);
 
   const { logout } = useAuth();
 
@@ -42,10 +44,25 @@ export const Dashboard = () => {
     localStorage.setItem("theme", theme);
   }, [theme]);
 
+  const loadDashboard = async () => {
+    try {
+      const [dadosTotals, dadosRecents, dadosAnalytics] = await Promise.all([
+        dashboardService.getTotals(),
+        dashboardService.getRecents(),
+        dashboardService.getAnalytics(),
+      ]);
+
+      setTotals(dadosTotals);
+      setRecents(dadosRecents);
+      setAnalytics(dadosAnalytics);
+    } catch (erro) {
+      console.error(`Erro ao carregar o dashboard: ${erro}`);
+    }
+  };
+
   useEffect(() => {
-    const buscarTrackers = async () => {
+    const fetchInitialTrackers = async () => {
       try {
-        // 1. O Promise.all dispara as 4 requisições ao mesmo tempo
         const [moviesRes, seriesRes, gamesRes, booksRes] = await Promise.all([
           api.get("/movies"),
           api.get("/series"),
@@ -53,7 +70,6 @@ export const Dashboard = () => {
           api.get("/books"),
         ]);
 
-        // 2. Junta todos os arrays que voltaram em um Super Array
         const allTrackers = [
           ...moviesRes.data,
           ...seriesRes.data,
@@ -61,7 +77,6 @@ export const Dashboard = () => {
           ...booksRes.data,
         ];
 
-        // 3. Ordena por data de atualização para os mais recentes ficarem no topo da lista
         allTrackers.sort(
           (a, b) =>
             new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
@@ -73,23 +88,8 @@ export const Dashboard = () => {
       }
     };
 
-    const loadDashboard = async () => {
-      try {
-        const [dadosTotals, dadosRecents, dadosAnalytics] = await Promise.all([
-          dashboardService.getTotals(),
-          dashboardService.getRecents(),
-          dashboardService.getAnalytics(),
-        ]);
-
-        setTotals(dadosTotals);
-        setRecents(dadosRecents);
-        setAnalytics(dadosAnalytics);
-      } catch (erro) {
-        console.error(`Erro ao carregar o dashboard: ${erro}`);
-      }
-    };
-
-    buscarTrackers();
+    fetchInitialTrackers();
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadDashboard();
   }, []);
 
@@ -97,25 +97,52 @@ export const Dashboard = () => {
     e.preventDefault();
 
     try {
-      const payload = {
+      let payload: any = {
         title,
         category,
-        posterPath,
         grade: Number(grade),
-        episodesWatched,
-        hoursPlayed,
-        readPages,
+        tags: tags.length > 0 ? tags : [category],
       };
 
       let route = "";
+
       if (category === "Series") {
         route = "/series";
+        payload = {
+          ...payload,
+          posterPath,
+          tmdbId: Number(externalId),
+          watchedEpisodes: Number(episodesWatched),
+          totalEpisodes: Number(totalEpisodesWatched),
+          seasons: 1,
+          seasonsWatched: 0,
+        };
       } else if (category === "Movie") {
         route = "/movies";
+        payload = {
+          ...payload,
+          posterPath,
+          tmdbId: Number(externalId),
+        };
       } else if (category === "Game") {
         route = "/games";
+        payload = {
+          ...payload,
+          coverPath: posterPath,
+          hoursPlayed: Number(hoursPlayed),
+          rawgId: Number(externalId),
+          platform: "PC",
+        };
       } else if (category === "Book") {
         route = "/books";
+        payload = {
+          ...payload,
+          coverPath: posterPath,
+          author: "Desconhecido",
+          readPages: Number(readPages),
+          totalPages: Number(totalReadPages),
+          openLibraryId: String(externalId),
+        };
       }
 
       if (idInEdition) {
@@ -128,7 +155,6 @@ export const Dashboard = () => {
         );
       } else {
         const resposta = await api.post(route, payload);
-
         setTrackers([resposta.data, ...trackers]);
       }
 
@@ -136,22 +162,30 @@ export const Dashboard = () => {
       setCategory("Series");
       setGrade("");
       setPosterPath("");
+      setExternalId("");
+      setTags([]);
       setIdEmEdicao(null);
+      setEpisodesWatched("");
+      setTotalEpisodesWatched("");
+      setHoursPlayed("");
+      setTotalHoursPlayed("");
+      setReadPages("");
+      setTotalReadPages("");
+
+      loadDashboard();
     } catch (erro) {
       console.error(`Erro ao salvar tracker: ${erro}`);
       alert("Erro ao salvar! Verifique o console.");
     }
   };
 
-  const deletarTracker = async (id: string) => {
+  const deleteTracker = async (id: string) => {
     if (!window.confirm("Tem certeza que deseja excluir este tracker?")) return;
 
     try {
-      // 1. Procura na memória qual é a categoria do item que o usuário quer deletar
       const trackerAlvo = trackers.find((t) => t.id === id);
       if (!trackerAlvo) return;
 
-      // 2. Define a rota com base na categoria encontrada
       let route = "";
       if (trackerAlvo.category === "Series") {
         route = "/series";
@@ -163,17 +197,18 @@ export const Dashboard = () => {
         route = "/books";
       }
 
-      // 3. Coloca o delete na rota certa
       await api.delete(`${route}/${id}`);
 
       setTrackers(trackers.filter((tracker) => tracker.id !== id));
+
+      loadDashboard();
     } catch (erro) {
       console.error(`Erro ao deletar tracker: ${erro}`);
       alert("Erro ao excluir! Verifique o console.");
     }
   };
 
-  const prepararEdicao = (tracker: ITracker) => {
+  const prepareEdition = (tracker: ITracker) => {
     setIdEmEdicao(tracker.id);
     setTitle(tracker.title);
     setCategory(tracker.category);
@@ -239,14 +274,13 @@ export const Dashboard = () => {
           setPosterPath={setPosterPath}
           search={search}
           setSearch={setSearch}
-          isSearching={isSearching}
-          setIsSearching={setIsSearching}
+          setExternalId={setExternalId}
         />
 
         <TrackerList
           trackers={trackers}
-          prepararEdicao={prepararEdicao}
-          deletarTracker={deletarTracker}
+          prepareEdition={prepareEdition}
+          deleteTracker={deleteTracker}
         />
       </div>
     </div>

@@ -3,14 +3,14 @@ import { ProgressBar } from "./ProgressBar";
 
 interface ListProps {
   trackers: ITracker[];
-  prepararEdicao: (tracker: ITracker) => void;
-  deletarTracker: (id: string) => void;
+  prepareEdition: (tracker: ITracker) => void;
+  deleteTracker: (id: string) => void;
 }
 
 export const TrackerList = ({
   trackers,
-  prepararEdicao,
-  deletarTracker,
+  prepareEdition,
+  deleteTracker,
 }: ListProps) => {
   if (trackers.length === 0) {
     return (
@@ -42,13 +42,13 @@ export const TrackerList = ({
 
             <div className="flex gap-2">
               <button
-                onClick={() => prepararEdicao(tracker)}
+                onClick={() => prepareEdition(tracker)}
                 className="rounded-lg bg-amber-100 px-3 py-1 font-medium text-amber-700 transition-colors hover:bg-amber-200"
               >
                 Editar
               </button>
               <button
-                onClick={() => deletarTracker(tracker.id)}
+                onClick={() => deleteTracker(tracker.id)}
                 className="rounded-lg bg-red-100 px-3 py-1 font-medium text-red-700 transition-colors hover:bg-red-200"
               >
                 Excluir
