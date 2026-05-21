@@ -1,4 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { FormEvent } from "react";
+import { api } from "../services/api";
 
 interface FormProps {
   title: string;
@@ -21,6 +23,12 @@ interface FormProps {
   setTotalReadPages: (v: number | "") => void;
   saveTracker: (e: FormEvent) => void;
   idInEdition: string | null;
+  posterPath: string;
+  setPosterPath: (v: string) => void;
+  search: any[];
+  setSearch: (v: any[]) => void;
+  isSearching: boolean;
+  setIsSearching: (v: boolean) => void;
 }
 
 export const TrackerForm = ({
@@ -44,7 +52,42 @@ export const TrackerForm = ({
   setTotalReadPages,
   saveTracker,
   idInEdition,
+  posterPath,
+  setPosterPath,
+  search,
+  setSearch,
+  isSearching,
+  setIsSearching,
 }: FormProps) => {
+  const handleSearch = async () => {
+    if (!title) {
+      return;
+    }
+
+    setIsSearching(true);
+
+    let route = "";
+    if (category === "Series") {
+      route = `/series/search?title=${title}`;
+    } else if (category === "Movie") {
+      route = `/movies/search?title=${title}`;
+    } else if (category === "Game") {
+      route = `/games/search?title=${title}`;
+    } else if (category === "Book") {
+      route = `/books/search?title=${title}`;
+    }
+
+    try {
+      const response = await api.get(route);
+
+      setSearch(response.data);
+    } catch (err) {
+      console.error("Erro na busca externa!", err);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
   return (
     <form
       onSubmit={saveTracker}
@@ -54,20 +97,82 @@ export const TrackerForm = ({
         {idInEdition ? "✏️ Editar Tracker" : "✨ Adicionar Novo"}
       </h3>
 
-      <div className="flex flex-col gap-4">
+      <div className="relative flex flex-col gap-4">
         <div>
+          {posterPath && (
+            <div className="mb-2 flex justify-center sm:justify-start">
+              <img
+                src={`https://image.tmdb.org/t/p/w92${posterPath}`}
+                alt="Capa selecionada"
+                className="h-24 w-16 rounded-md object-cover shadow-sm"
+              />
+            </div>
+          )}
           <label className="mb-1 block text-sm font-medium text-gray-700">
             Título
           </label>
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="w-full rounded-lg border border-gray-300 p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-            placeholder="Supernatural"
-            required
-          />
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="w-full rounded-lg border border-gray-300 p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              placeholder="Supernatural"
+              required
+            />
+          </div>
+
+          <button
+            type="button"
+            onClick={handleSearch}
+            disabled={isSearching || !title}
+            className="rounded-lg bg-blue-600 px-4 py-2 text-white"
+          >
+            {isSearching ? "Buscando..." : "Buscar"}
+          </button>
         </div>
+
+        {/* Renderização Condicional do Dropdown de Busca */}
+        {search.length > 0 && (
+          <div className="ring-opacity-5 absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black focus:outline-none sm:text-sm">
+            {search.map((item, index) => (
+              <div
+                key={index}
+                className="relative cursor-pointer py-2 pr-9 pl-3 text-gray-900 select-none hover:bg-blue-600 hover:text-white"
+                onClick={() => {
+                  setTitle(item.title || item.name);
+                  setPosterPath(item.poster_path);
+                  setSearch([]);
+                }}
+              >
+                <div className="flex items-center">
+                  {item.poster_path ? (
+                    <img
+                      src={`https://image.tmdb.org/t/p/w92${item.poster_path}`}
+                      alt={item.title || item.name}
+                      className="mr-3 h-12 w-8 shrink-0 object-cover"
+                    />
+                  ) : (
+                    <div className="mr-3 h-12 w-8 bg-gray-200"></div>
+                  )}
+
+                  <div className="flex flex-col">
+                    <span className="block truncate font-normal">
+                      {item.title || item.name}
+                    </span>
+                    <span className="block truncate text-xs opacity-70">
+                      {item.release_date || item.first_air_date
+                        ? new Date(
+                            item.release_date || item.first_air_date,
+                          ).getFullYear()
+                        : "Ano desconhecido"}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
 
         <div className="grid grid-cols-2 gap-4">
           <div>

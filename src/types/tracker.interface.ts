@@ -3,6 +3,7 @@ export interface ITracker {
   title: string;
   category: string;
   grade: number;
+  posterPath?: string;
   episodesWatched?: number;
   totalEpisodesWatched?: number;
   hoursPlayed?: number;
