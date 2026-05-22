@@ -1,13 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState, type FormEvent } from "react";
+import { AnalyticsDashboard } from "../components/AnalyticsDashboard";
+import { DashboardCards } from "../components/DashboardCards";
+import { Header } from "../components/Header";
+import { RecentTimeline } from "../components/RecentTimeline";
 import { TrackerForm } from "../components/TrackerForm";
 import { TrackerList } from "../components/TrackerList";
-import type { ITracker } from "../types/tracker.interface";
-import { api, dashboardService } from "../services/api";
-import { DashboardCards } from "../components/DashboardCards";
-import { RecentTimeline } from "../components/RecentTimeline";
-import { AnalyticsDashboard } from "../components/AnalyticsDashboard";
 import { useAuth } from "../contexts/AuthContext";
+import { api, dashboardService } from "../services/api";
+import type { ITracker } from "../types/tracker.interface";
+import toast from "react-hot-toast";
 
 export const Dashboard = () => {
   const [trackers, setTrackers] = useState<ITracker[]>([]);
@@ -56,7 +58,7 @@ export const Dashboard = () => {
       setRecents(dadosRecents);
       setAnalytics(dadosAnalytics);
     } catch (erro) {
-      console.error(`Erro ao carregar o dashboard: ${erro}`);
+      console.error(`Error loading dashboard: ${erro}`);
     }
   };
 
@@ -84,7 +86,7 @@ export const Dashboard = () => {
 
         setTrackers(allTrackers);
       } catch (erro) {
-        console.error(`Erro ao buscar os trackers: ${erro}`);
+        console.error(`Error retrieving trackers: ${erro}`);
       }
     };
 
@@ -138,7 +140,7 @@ export const Dashboard = () => {
         payload = {
           ...payload,
           coverPath: posterPath,
-          author: "Desconhecido",
+          author: "Unknown",
           readPages: Number(readPages),
           totalPages: Number(totalReadPages),
           openLibraryId: String(externalId),
@@ -173,14 +175,19 @@ export const Dashboard = () => {
       setTotalReadPages("");
 
       loadDashboard();
+
+      toast.success(
+        idInEdition ? "Tracker updated!" : "Tracker created successfully!",
+      );
     } catch (erro) {
-      console.error(`Erro ao salvar tracker: ${erro}`);
-      alert("Erro ao salvar! Verifique o console.");
+      console.error(`Error saving tracker: ${erro}`);
+      toast.error("Error saving. Please check the data.");
     }
   };
 
   const deleteTracker = async (id: string) => {
-    if (!window.confirm("Tem certeza que deseja excluir este tracker?")) return;
+    if (!window.confirm("Are you sure you want to delete this tracker?"))
+      return;
 
     try {
       const trackerAlvo = trackers.find((t) => t.id === id);
@@ -202,9 +209,11 @@ export const Dashboard = () => {
       setTrackers(trackers.filter((tracker) => tracker.id !== id));
 
       loadDashboard();
+
+      toast.success("Tracker deleted!");
     } catch (erro) {
-      console.error(`Erro ao deletar tracker: ${erro}`);
-      alert("Erro ao excluir! Verifique o console.");
+      console.error(`Error deleting tracker: ${erro}`);
+      toast.error("Error deleting.");
     }
   };
 
@@ -217,71 +226,58 @@ export const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 px-4 py-10 dark:bg-gray-950">
-      <div className="mx-auto max-w-2xl">
-        <h1 className="mb-8 text-center text-3xl font-extrabold tracking-tight text-blue-600">
-          My Tracker
-        </h1>
+    <div className="dark:bg-bg-dark min-h-screen bg-slate-100">
+      <Header theme={theme} setTheme={setTheme} logout={logout} />
 
-        <div className="flex justify-between gap-4">
-          <button
-            className="mb-4 flex-1 rounded-md bg-white p-4 font-semibold text-black shadow-md transition hover:bg-gray-100 dark:bg-gray-900 dark:text-white dark:hover:bg-gray-800"
-            onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-          >
-            Mudar para {theme === "light" ? "Escuro" : "Claro"}
-          </button>
-
-          <button
-            className="mb-4 rounded-md bg-red-100 p-4 font-semibold text-red-600 shadow-md transition hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/50"
-            onClick={logout}
-          >
-            Sair
-          </button>
+      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+        <div className="space-y-8">
+          <DashboardCards
+            totals={totals}
+            recents={recents}
+            analytics={analytics}
+          />
+          <AnalyticsDashboard analytics={analytics} />
         </div>
 
-        <DashboardCards
-          totals={totals}
-          recents={recents}
-          analytics={analytics}
-        />
+        <div className="mt-8 grid grid-cols-1 items-start gap-8 lg:grid-cols-2">
+          <RecentTimeline recents={recents} />
 
-        <AnalyticsDashboard analytics={analytics} />
+          <TrackerForm
+            title={title}
+            setTitle={setTitle}
+            category={category}
+            setCategory={setCategory}
+            grade={grade}
+            setGrade={setGrade}
+            saveTracker={saveTracker}
+            idInEdition={idInEdition}
+            episodesWatched={episodesWatched}
+            setEpisodesWatched={setEpisodesWatched}
+            totalEpisodesWatched={totalEpisodesWatched}
+            setTotalEpisodesWatched={setTotalEpisodesWatched}
+            hoursPlayed={hoursPlayed}
+            setHoursPlayed={setHoursPlayed}
+            totalHoursPlayed={totalHoursPlayed}
+            setTotalHoursPlayed={setTotalHoursPlayed}
+            readPages={readPages}
+            setReadPages={setReadPages}
+            totalReadPages={totalReadPages}
+            setTotalReadPages={setTotalReadPages}
+            posterPath={posterPath}
+            setPosterPath={setPosterPath}
+            search={search}
+            setSearch={setSearch}
+            setExternalId={setExternalId}
+          />
+        </div>
 
-        <RecentTimeline recents={recents} />
-
-        <TrackerForm
-          title={title}
-          setTitle={setTitle}
-          category={category}
-          setCategory={setCategory}
-          grade={grade}
-          setGrade={setGrade}
-          saveTracker={saveTracker}
-          idInEdition={idInEdition}
-          episodesWatched={episodesWatched}
-          setEpisodesWatched={setEpisodesWatched}
-          totalEpisodesWatched={totalEpisodesWatched}
-          setTotalEpisodesWatched={setTotalEpisodesWatched}
-          hoursPlayed={hoursPlayed}
-          setHoursPlayed={setHoursPlayed}
-          totalHoursPlayed={totalHoursPlayed}
-          setTotalHoursPlayed={setTotalHoursPlayed}
-          readPages={readPages}
-          setReadPages={setReadPages}
-          totalReadPages={totalReadPages}
-          setTotalReadPages={setTotalReadPages}
-          posterPath={posterPath}
-          setPosterPath={setPosterPath}
-          search={search}
-          setSearch={setSearch}
-          setExternalId={setExternalId}
-        />
-
-        <TrackerList
-          trackers={trackers}
-          prepareEdition={prepareEdition}
-          deleteTracker={deleteTracker}
-        />
+        <div className="mt-8">
+          <TrackerList
+            trackers={trackers}
+            prepareEdition={prepareEdition}
+            deleteTracker={deleteTracker}
+          />
+        </div>
       </div>
     </div>
   );

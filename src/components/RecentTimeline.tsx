@@ -1,22 +1,24 @@
+import { Book, Clapperboard, Gamepad2, History, Pin, Tv } from "lucide-react";
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface RecentTimelineProps {
   recents: any[];
 }
 
-const iconsTracker: Record<string, string> = {
-  SERIES: "📺",
-  MOVIE: "🍿",
-  GAME: "🎮",
-  BOOK: "📖",
+const iconsTracker: Record<string, React.ReactNode> = {
+  SERIES: <Tv />,
+  MOVIE: <Clapperboard />,
+  GAME: <Gamepad2 />,
+  BOOK: <Book />,
   // Fallback
-  Default: "📌",
+  Default: <Pin />,
 };
 
 export const RecentTimeline = ({ recents }: RecentTimelineProps) => {
   // LOADING STATE
   if (!recents) {
     return (
-      <div className="mt-8 rounded-xl bg-white p-6 shadow-sm dark:bg-gray-900">
+      <div className="rounded-2xlxl bg-surface-light dark:bg-surface-dark mt-8 rounded-2xl border border-gray-200 shadow-sm dark:border-gray-800">
         <div className="mb-4 h-6 w-48 animate-pulse rounded bg-gray-200 dark:bg-gray-800"></div>
         <ul className="space-y-4">
           {/* Array falso [1,2,3] só para renderizar 3 linhas piscando */}
@@ -26,7 +28,7 @@ export const RecentTimeline = ({ recents }: RecentTimelineProps) => {
               className="flex justify-between border-b border-gray-100 pb-2 dark:border-gray-800"
             >
               <div className="flex items-center gap-2">
-                <div className="h-6 w-6 animate-pulse rounded-md bg-gray-200 dark:bg-gray-800"></div>
+                <div className="rounded-2xlmd h-6 w-6 animate-pulse bg-gray-200 dark:bg-gray-800"></div>
                 <div className="h-5 w-32 animate-pulse rounded bg-gray-200 dark:bg-gray-800"></div>
               </div>
             </li>
@@ -44,8 +46,10 @@ export const RecentTimeline = ({ recents }: RecentTimelineProps) => {
   }
 
   return (
-    <div className="mt-8 rounded-xl bg-white p-6 shadow-sm dark:bg-gray-500">
-      <h3 className="mb-4 text-xl font-bold">Últimas Atualizações</h3>
+    <div className="dark:bg-surface-dark mt-8 rounded-2xl bg-white p-6 shadow-sm">
+      <h3 className="mb-4 flex items-center gap-2 text-xl font-bold">
+        <History /> Latest Updates
+      </h3>
 
       <ul className="space-y-4">
         {recents.map((tracker) => (

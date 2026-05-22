@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { Pencil, Sparkles } from "lucide-react";
 import { useEffect, useRef, type FormEvent } from "react";
 import { api } from "../services/api";
 
@@ -113,10 +114,20 @@ export const TrackerForm = ({
   return (
     <form
       onSubmit={saveTracker}
-      className="mb-8 rounded-xl border border-gray-200 bg-white p-6 shadow-sm"
+      className="bg-surface-light dark:bg-surface-dark mb-8 rounded-xl border border-gray-200 p-6 shadow-sm"
     >
-      <h3 className="mb-4 border-b pb-2 text-xl font-semibold text-gray-800">
-        {idInEdition ? "✏️ Editar Tracker" : "✨ Adicionar Novo"}
+      <h3 className="mb-4 flex items-center gap-2 border-b border-gray-200 pb-2 text-xl font-semibold text-gray-900 dark:border-gray-800 dark:text-gray-100">
+        {idInEdition ? (
+          <>
+            <Pencil className="text-amber-500" size={20} />
+            Edit Tracker
+          </>
+        ) : (
+          <>
+            <Sparkles className="text-brand-500" size={20} />
+            Add New
+          </>
+        )}
       </h3>
 
       <div className="flex flex-col gap-4">
@@ -130,26 +141,26 @@ export const TrackerForm = ({
               />
             </div>
           )}
-          <label className="mb-1 block text-sm font-medium text-gray-700">
-            Título
+          <label className="mb-1 block text-sm font-medium text-gray-900 dark:text-gray-100">
+            Title
           </label>
           <div className="flex gap-2">
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full rounded-lg border border-gray-300 p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              placeholder="Digite para buscar automaticamente..."
+              className="w-full rounded-lg border border-gray-300 bg-transparent p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              placeholder="Type to search automatically..."
               required
             />
           </div>
 
           {search.length > 0 && (
-            <div className="ring-opacity-5 absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black focus:outline-none sm:text-sm">
+            <div className="ring-opacity-5 bg-surface-light dark:bg-surface-dark absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md py-1 text-base shadow-lg ring-1 ring-black focus:outline-none sm:text-sm">
               {search.map((item, index) => (
                 <div
                   key={index}
-                  className="relative cursor-pointer py-2 pr-9 pl-3 text-gray-900 select-none hover:bg-blue-600 hover:text-white"
+                  className="relative cursor-pointer py-2 pr-9 pl-3 text-gray-900 select-none hover:bg-blue-600 hover:text-white dark:text-gray-100"
                   onClick={() => {
                     skipSearchRef.current = true;
 
@@ -196,24 +207,24 @@ export const TrackerForm = ({
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
-              Categoria
+            <label className="mb-1 block text-sm font-medium text-gray-900 dark:text-gray-100">
+              Category
             </label>
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="w-full rounded-lg border border-gray-300 bg-white p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              className="w-full rounded-lg border border-gray-300 p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
             >
-              <option value="Series">Série</option>
-              <option value="Movie">Filme</option>
-              <option value="Game">Jogo</option>
-              <option value="Book">Livro</option>
+              <option value="Series">Series</option>
+              <option value="Movie">Movie</option>
+              <option value="Game">Game</option>
+              <option value="Book">Book</option>
             </select>
           </div>
 
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
-              Nota (0 a 10)
+            <label className="mb-1 block text-sm font-medium text-gray-900 dark:text-gray-100">
+              Rating (0 to 10)
             </label>
             <input
               type="number"
@@ -223,7 +234,7 @@ export const TrackerForm = ({
               onChange={(e) =>
                 setGrade(e.target.value === "" ? "" : Number(e.target.value))
               }
-              className="w-full rounded-lg border border-gray-300 p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              className="w-full rounded-lg border border-gray-300 bg-transparent p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
               required
             />
           </div>
@@ -232,11 +243,11 @@ export const TrackerForm = ({
         {category === "Series" && (
           <div className="mt-4 grid grid-cols-2 gap-4">
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">
-                Episódios Assistidos
+              <label className="mb-1 block text-sm font-medium text-gray-900 dark:text-gray-100">
+                Watched Episodes
               </label>
               <input
-                className="w-full rounded-lg border border-gray-300 p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                className="w-full rounded-lg border border-gray-300 bg-transparent p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 type="number"
                 value={episodesWatched}
                 onChange={(e) =>
@@ -248,11 +259,11 @@ export const TrackerForm = ({
             </div>
 
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">
-                Total de Episódios Assistidos
+              <label className="mb-1 block text-sm font-medium text-gray-900 dark:text-gray-100">
+                Total Episodes
               </label>
               <input
-                className="w-full rounded-lg border border-gray-300 p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                className="w-full rounded-lg border border-gray-300 bg-transparent p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 type="number"
                 value={totalEpisodesWatched}
                 onChange={(e) =>
@@ -268,11 +279,11 @@ export const TrackerForm = ({
         {category === "Game" && (
           <div className="mt-4 grid grid-cols-2 gap-4">
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">
-                Horas Jogadas
+              <label className="mb-1 block text-sm font-medium text-gray-900 dark:text-gray-100">
+                Hours Played
               </label>
               <input
-                className="w-full rounded-lg border border-gray-300 p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                className="w-full rounded-lg border border-gray-300 bg-transparent p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 type="number"
                 value={hoursPlayed}
                 onChange={(e) =>
@@ -284,11 +295,11 @@ export const TrackerForm = ({
             </div>
 
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">
-                Total de Horas Jogadas
+              <label className="mb-1 block text-sm font-medium text-gray-900 dark:text-gray-100">
+                Total Hours
               </label>
               <input
-                className="w-full rounded-lg border border-gray-300 p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                className="w-full rounded-lg border border-gray-300 bg-transparent p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 type="number"
                 value={totalHoursPlayed}
                 onChange={(e) =>
@@ -304,11 +315,11 @@ export const TrackerForm = ({
         {category === "Book" && (
           <div className="mt-4 grid grid-cols-2 gap-4">
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">
-                Páginas Lidas
+              <label className="mb-1 block text-sm font-medium text-gray-900 dark:text-gray-100">
+                Read Pages
               </label>
               <input
-                className="w-full rounded-lg border border-gray-300 p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                className="w-full rounded-lg border border-gray-300 bg-transparent p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 type="number"
                 value={readPages}
                 onChange={(e) =>
@@ -320,11 +331,11 @@ export const TrackerForm = ({
             </div>
 
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">
-                Total de Páginas Lidas
+              <label className="mb-1 block text-sm font-medium text-gray-900 dark:text-gray-100">
+                TotalRead
               </label>
               <input
-                className="w-full rounded-lg border border-gray-300 p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                className="w-full rounded-lg border border-gray-300 bg-transparent p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 type="number"
                 value={totalReadPages}
                 onChange={(e) =>
@@ -339,9 +350,13 @@ export const TrackerForm = ({
 
         <button
           type="submit"
-          className={`mt-2 w-full rounded-lg px-4 py-2 font-bold text-white transition-colors ${idInEdition ? "bg-amber-500 hover:bg-amber-600" : "bg-blue-600 hover:bg-blue-700"}`}
+          className={`mt-4 w-full rounded-xl px-4 py-3 font-semibold text-white transition-all hover:-translate-y-1 hover:shadow-lg ${
+            idInEdition
+              ? "bg-amber-500 hover:bg-amber-400 dark:hover:shadow-amber-500/30"
+              : "bg-brand-600 hover:bg-brand-500 dark:hover:shadow-brand-600/30"
+          }`}
         >
-          {idInEdition ? "Atualizar Tracker" : "Salvar no Banco"}
+          {idInEdition ? "Update Tracker" : "Save Tracker"}
         </button>
       </div>
     </form>
