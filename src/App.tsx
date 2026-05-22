@@ -5,6 +5,11 @@ import { Dashboard } from "./pages/Dashboard";
 import { Login } from "./pages/Login";
 import { Register } from "./pages/Register";
 import { Toaster } from "react-hot-toast";
+import { Movies } from "./pages/Movies";
+import { Series } from "./pages/Series";
+import { Games } from "./pages/Games";
+import { Books } from "./pages/Books";
+import { Profile } from "./pages/Profile";
 
 export const App = () => {
   return (
@@ -12,11 +17,11 @@ export const App = () => {
       <Toaster position="top-right" />
       <BrowserRouter>
         <Routes>
-          {/* Rota Pública */}
+          {/* Public Routes */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
 
-          {/* Rota Privada */}
+          {/* Private Routes */}
           <Route
             path="/"
             element={
@@ -25,8 +30,48 @@ export const App = () => {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/movies"
+            element={
+              <ProtectedRoute>
+                <Movies />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/series"
+            element={
+              <ProtectedRoute>
+                <Series />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/games"
+            element={
+              <ProtectedRoute>
+                <Games />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/books"
+            element={
+              <ProtectedRoute>
+                <Books />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
 
-          {/* Rota de fallback: Se digitar URL que não existe, manda pro Dashboard */}
+          {/* Fallback Route */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>

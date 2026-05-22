@@ -103,5 +103,3 @@ export const Login = () => {
     </div>
   );
 };
-
-// A tela de Login precisa de um link ou botão novo lá embaixo dizendo algo como: "Não tem uma conta? Cadastre-se aqui". Esse botão deve redirecionar o usuário para a rota "/register". Você pode usar o componente <Link to="/register"> do react-router-dom ou o próprio useNavigate.
