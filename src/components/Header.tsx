@@ -9,8 +9,10 @@ import {
   Tv,
   Gamepad2,
   Book,
+  Sparkle,
 } from "lucide-react";
 import { Link, NavLink } from "react-router-dom";
+import { useModal } from "../contexts/ModalContext";
 
 interface HeaderProps {
   theme: any;
@@ -19,6 +21,8 @@ interface HeaderProps {
 }
 
 export function Header({ theme, setTheme, logout }: HeaderProps) {
+  const { setIsModalOpen } = useModal();
+
   return (
     <header className="dark:bg-bg-dark/80 sticky top-0 z-50 flex items-center justify-between border-b border-gray-200 bg-white/80 px-12 py-4 backdrop-blur-md dark:border-gray-800">
       <div className="flex items-center gap-8">
@@ -99,6 +103,13 @@ export function Header({ theme, setTheme, logout }: HeaderProps) {
 
       <div className="flex items-center justify-center gap-4">
         <button
+          onClick={() => setIsModalOpen(true)}
+          className="bg-brand-600 hover:bg-brand-500 flex items-center gap-2 rounded-xl px-4 py-2 font-medium text-white transition"
+        >
+          <Sparkle size={20} /> Add New
+        </button>
+
+        <button
           className="rounded-full bg-gray-100 p-2.5 text-gray-700 transition hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
           onClick={() => setTheme(theme === "light" ? "dark" : "light")}
         >
@@ -110,7 +121,6 @@ export function Header({ theme, setTheme, logout }: HeaderProps) {
           className="text-brand-600 dark:bg-brand-500/20 dark:text-brand-400 dark:hover:bg-brand-500/30 rounded-full bg-gray-100 p-2.5 transition hover:bg-gray-200"
         >
           <User size={20} />
-          <Link to="/profile" />
         </Link>
 
         <button

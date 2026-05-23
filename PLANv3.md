@@ -28,9 +28,9 @@ Version 3.0 transforms the project from a passive CRUD application into an activ
 - **Branch:** `feat/navbar-navigation`
   - [x] Add navigation links/icons to `Header.tsx`.
 - **Branch:** `feat/global-add-modal`
-  - [ ] Remove `<TrackerForm />` from `Dashboard.tsx`.
-  - [ ] Transform `<TrackerForm />` into a floating Modal (`backdrop-blur`).
-  - [ ] Add a "✨ Add New" button in the `Header.tsx` to trigger this Modal globally.
+  - [x] Remove `<TrackerForm />` from `Dashboard.tsx`.
+  - [x] Transform `<TrackerForm />` into a floating Modal (`backdrop-blur`).
+  - [x] Add a "✨ Add New" button in the `Header.tsx` to trigger this Modal globally.
 
 ---
 

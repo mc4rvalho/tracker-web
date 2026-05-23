@@ -10,71 +10,79 @@ import { Series } from "./pages/Series";
 import { Games } from "./pages/Games";
 import { Books } from "./pages/Books";
 import { Profile } from "./pages/Profile";
+import { ModalProvider } from "./contexts/ModalContext";
+import { AddTrackerModal } from "./components/AddTrackerModal";
+import { DashboardProvider } from "./contexts/DashboardContext";
 
 export const App = () => {
   return (
     <AuthProvider>
-      <Toaster position="top-right" />
-      <BrowserRouter>
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+      <ModalProvider>
+        <DashboardProvider>
+          <Toaster position="top-right" />
+          <BrowserRouter>
+            <AddTrackerModal />
+            <Routes>
+              {/* Public Routes */}
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
 
-          {/* Private Routes */}
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/movies"
-            element={
-              <ProtectedRoute>
-                <Movies />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/series"
-            element={
-              <ProtectedRoute>
-                <Series />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/games"
-            element={
-              <ProtectedRoute>
-                <Games />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/books"
-            element={
-              <ProtectedRoute>
-                <Books />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/profile"
-            element={
-              <ProtectedRoute>
-                <Profile />
-              </ProtectedRoute>
-            }
-          />
+              {/* Private Routes */}
+              <Route
+                path="/"
+                element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/movies"
+                element={
+                  <ProtectedRoute>
+                    <Movies />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/series"
+                element={
+                  <ProtectedRoute>
+                    <Series />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/games"
+                element={
+                  <ProtectedRoute>
+                    <Games />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/books"
+                element={
+                  <ProtectedRoute>
+                    <Books />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute>
+                    <Profile />
+                  </ProtectedRoute>
+                }
+              />
 
-          {/* Fallback Route */}
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </BrowserRouter>
+              {/* Fallback Route */}
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </BrowserRouter>
+        </DashboardProvider>
+      </ModalProvider>
     </AuthProvider>
   );
 };
