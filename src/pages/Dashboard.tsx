@@ -6,12 +6,22 @@ import { RecentTimeline } from "../components/RecentTimeline";
 import { TrackerList } from "../components/TrackerList";
 import { useAuth } from "../contexts/AuthContext";
 import { useDashboard } from "../contexts/DashboardContext";
+import { useModal } from "../contexts/ModalContext";
+import type { ITracker } from "../types/tracker.interface";
 
 export const Dashboard = () => {
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
 
-  const { trackers, totals, recents, analytics, deleteTracker } =
-    useDashboard();
+  const { setIsModalOpen } = useModal();
+
+  const {
+    trackers,
+    totals,
+    recents,
+    analytics,
+    deleteTracker,
+    setEditingTracker,
+  } = useDashboard();
 
   const { logout } = useAuth();
 
@@ -20,8 +30,9 @@ export const Dashboard = () => {
     localStorage.setItem("theme", theme);
   }, [theme]);
 
-  const prepareEdition = () => {
-    console.log("Edition moved to Sprint 9");
+  const prepareEdition = (tracker: ITracker) => {
+    setEditingTracker(tracker);
+    setIsModalOpen(true);
   };
 
   return (

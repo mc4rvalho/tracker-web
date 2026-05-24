@@ -39,14 +39,14 @@ Version 3.0 transforms the project from a passive CRUD application into an activ
 **Focus:** Expand integration Services to fetch deep media details using external IDs, automating total fields.
 
 - **Branch:** `feat/tmdb-deep-integration`
-  - [ ] Create `getSeriesDetails(tmdbId)` in `TmdbService` calling the `/tv/{id}` route to extract `number_of_episodes` and `number_of_seasons`.
-  - [ ] Update `SeriesService.create` to intercept and fetch these totals before saving to Prisma.
+  - [x] Create `getSeriesDetails(tmdbId)` in `TmdbService` calling the `/tv/{id}` route to extract `number_of_episodes` and `number_of_seasons`.
+  - [x] Update `SeriesService.create` to intercept and fetch these totals before saving to Prisma.
 - **Branch:** `feat/rawg-deep-integration`
-  - [ ] Create `getGameDetails(rawgId)` in `RawgService` calling the `/games/{id}` route to extract `playtime`.
-  - [ ] Update `GamesService.create` to intercept and fetch `hoursPlayed` totals.
+  - [x] Create `getGameDetails(rawgId)` in `RawgService` calling the `/games/{id}` route to extract `playtime`.
+  - [x] Update `GamesService.create` to intercept and fetch `hoursPlayed` totals.
 - **Branch:** `feat/openlibrary-deep-integration`
-  - [ ] Create `getBookDetails(openLibraryId)` in `OpenLibraryService` to extract `number_of_pages` and `author_name`.
-  - [ ] Update `BooksService.create` to intercept and fetch these details.
+  - [x] Create `getBookDetails(openLibraryId)` in `OpenLibraryService` to extract `number_of_pages` and `author_name`.
+  - [x] Update `BooksService.create` to intercept and fetch these details.
 
 ---
 
@@ -55,6 +55,7 @@ Version 3.0 transforms the project from a passive CRUD application into an activ
 **Focus:** The user no longer types totals. The system displays dynamic progress and allows quick-click updates.
 
 - **Branch:** `feat/smart-form-cleanup`
+  - [ ] Implement Global Modal Edit Mode (Context, Trigger e AutoComplete).
   - [ ] Remove "Total Episodes", "Total Hours", and "Total Pages" inputs from `<TrackerForm />` (Back-end handles this now).
   - [ ] Hide category selection if the user opens the Modal from a specific route (e.g., auto-select "Game" if on `/games`).
 - **Branch:** `feat/quick-update-buttons`
@@ -80,3 +81,17 @@ Version 3.0 transforms the project from a passive CRUD application into an activ
   - [ ] Render user data and macro statistics in `Profile.tsx`.
   - [ ] Display the user's last 5 written reviews.
   - [ ] Layout Refactoring (Mobile-First): Review global alignments, paddings, and the responsiveness of lists, forms, and dashboard charts.
+
+## 📚 Sprint 11: The Library Pages (Routing & Filtering)
+
+**Focus:** Create isolated pages for each category (Movies, Series, Games, Books) to allow focused viewing and management, expanding the SPA routing.
+
+- **Branch:** `feat/category-routes`
+  - [ ] Set up React Router DOM paths for `/movies`, `/series`, `/games`, and `/books` in `App.tsx`.
+  - [ ] Create base page components (`MoviesPage.tsx`, `SeriesPage.tsx`, etc.).
+- **Branch:** `feat/filtered-views`
+  - [ ] Reuse the `TrackerList` component within each new page.
+  - [ ] Implement local filtering or dedicated Back-end endpoints to fetch only trackers of the specific category.
+  - [ ] Ensure the Global Modal works correctly when triggered from these new pages.
+- **Branch:** `feat/navigation-active-state`
+  - [ ] Update the Header navigation links to visually highlight the active route.

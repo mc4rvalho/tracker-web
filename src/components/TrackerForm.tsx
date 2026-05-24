@@ -12,16 +12,10 @@ interface FormProps {
   setGrade: (v: number | "") => void;
   episodesWatched: number | "";
   setEpisodesWatched: (v: number | "") => void;
-  totalEpisodesWatched: number | "";
-  setTotalEpisodesWatched: (v: number | "") => void;
   hoursPlayed: number | "";
   setHoursPlayed: (v: number | "") => void;
-  totalHoursPlayed: number | "";
-  setTotalHoursPlayed: (v: number | "") => void;
   readPages: number | "";
   setReadPages: (v: number | "") => void;
-  totalReadPages: number | "";
-  setTotalReadPages: (v: number | "") => void;
   saveTracker: (e: FormEvent) => void;
   idInEdition: string | null;
   posterPath: string;
@@ -29,6 +23,7 @@ interface FormProps {
   search: any[];
   setSearch: (v: any[]) => void;
   setExternalId: (v: number | string) => void;
+  currentPath: string;
 }
 
 export const TrackerForm = ({
@@ -40,16 +35,10 @@ export const TrackerForm = ({
   setGrade,
   episodesWatched,
   setEpisodesWatched,
-  totalEpisodesWatched,
-  setTotalEpisodesWatched,
   hoursPlayed,
   setHoursPlayed,
-  totalHoursPlayed,
-  setTotalHoursPlayed,
   readPages,
   setReadPages,
-  totalReadPages,
-  setTotalReadPages,
   saveTracker,
   idInEdition,
   posterPath,
@@ -57,6 +46,7 @@ export const TrackerForm = ({
   search,
   setSearch,
   setExternalId,
+  currentPath,
 }: FormProps) => {
   const skipSearchRef = useRef(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -168,10 +158,6 @@ export const TrackerForm = ({
                     setPosterPath(item.poster_path);
                     setExternalId(item.id);
 
-                    if (category === "Series" && item.number_of_episodes) {
-                      setTotalEpisodesWatched(item.number_of_episodes);
-                    }
-
                     setSearch([]);
                   }}
                 >
@@ -206,23 +192,25 @@ export const TrackerForm = ({
         </div>
 
         <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="mb-1 block text-sm font-medium text-gray-900 dark:text-gray-100">
-              Category
-            </label>
-            <select
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              className="w-full rounded-lg border border-gray-300 p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-            >
-              <option value="Series">Series</option>
-              <option value="Movie">Movie</option>
-              <option value="Game">Game</option>
-              <option value="Book">Book</option>
-            </select>
-          </div>
+          {currentPath === "/" && (
+            <div>
+              <label className="mb-1 block text-sm font-medium text-gray-900 dark:text-gray-100">
+                Category
+              </label>
+              <select
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                className="w-full rounded-lg border border-gray-300 p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              >
+                <option value="Series">Series</option>
+                <option value="Movie">Movie</option>
+                <option value="Game">Game</option>
+                <option value="Book">Book</option>
+              </select>
+            </div>
+          )}
 
-          <div>
+          <div className={currentPath === "/" ? "" : "col-span-2"}>
             <label className="mb-1 block text-sm font-medium text-gray-900 dark:text-gray-100">
               Rating (0 to 10)
             </label>
@@ -241,7 +229,7 @@ export const TrackerForm = ({
         </div>
 
         {category === "Series" && (
-          <div className="mt-4 grid grid-cols-2 gap-4">
+          <div className="mt-4 grid grid-cols-1 gap-4">
             <div>
               <label className="mb-1 block text-sm font-medium text-gray-900 dark:text-gray-100">
                 Watched Episodes
@@ -257,27 +245,11 @@ export const TrackerForm = ({
                 }
               />
             </div>
-
-            <div>
-              <label className="mb-1 block text-sm font-medium text-gray-900 dark:text-gray-100">
-                Total Episodes
-              </label>
-              <input
-                className="w-full rounded-lg border border-gray-300 bg-transparent p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                type="number"
-                value={totalEpisodesWatched}
-                onChange={(e) =>
-                  setTotalEpisodesWatched(
-                    e.target.value === "" ? "" : Number(e.target.value),
-                  )
-                }
-              />
-            </div>
           </div>
         )}
 
         {category === "Game" && (
-          <div className="mt-4 grid grid-cols-2 gap-4">
+          <div className="mt-4 grid grid-cols-1 gap-4">
             <div>
               <label className="mb-1 block text-sm font-medium text-gray-900 dark:text-gray-100">
                 Hours Played
@@ -293,27 +265,11 @@ export const TrackerForm = ({
                 }
               />
             </div>
-
-            <div>
-              <label className="mb-1 block text-sm font-medium text-gray-900 dark:text-gray-100">
-                Total Hours
-              </label>
-              <input
-                className="w-full rounded-lg border border-gray-300 bg-transparent p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                type="number"
-                value={totalHoursPlayed}
-                onChange={(e) =>
-                  setTotalHoursPlayed(
-                    e.target.value === "" ? "" : Number(e.target.value),
-                  )
-                }
-              />
-            </div>
           </div>
         )}
 
         {category === "Book" && (
-          <div className="mt-4 grid grid-cols-2 gap-4">
+          <div className="mt-4 grid grid-cols-1 gap-4">
             <div>
               <label className="mb-1 block text-sm font-medium text-gray-900 dark:text-gray-100">
                 Read Pages
@@ -324,22 +280,6 @@ export const TrackerForm = ({
                 value={readPages}
                 onChange={(e) =>
                   setReadPages(
-                    e.target.value === "" ? "" : Number(e.target.value),
-                  )
-                }
-              />
-            </div>
-
-            <div>
-              <label className="mb-1 block text-sm font-medium text-gray-900 dark:text-gray-100">
-                TotalRead
-              </label>
-              <input
-                className="w-full rounded-lg border border-gray-300 bg-transparent p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                type="number"
-                value={totalReadPages}
-                onChange={(e) =>
-                  setTotalReadPages(
                     e.target.value === "" ? "" : Number(e.target.value),
                   )
                 }

@@ -18,6 +18,8 @@ interface DashboardContextData {
   analytics: any;
   loadDashboard: () => Promise<void>;
   deleteTracker: (id: string) => Promise<void>;
+  editingTracker: ITracker | null;
+  setEditingTracker: React.Dispatch<React.SetStateAction<ITracker | null>>;
 }
 
 const DashboardContext = createContext<DashboardContextData>(
@@ -29,6 +31,8 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
   const [totals, setTotals] = useState<any>(null);
   const [recents, setRecents] = useState<any>(null);
   const [analytics, setAnalytics] = useState<any>(null);
+
+  const [editingTracker, setEditingTracker] = useState<ITracker | null>(null);
 
   const loadDashboard = async () => {
     try {
@@ -121,6 +125,8 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
         analytics,
         loadDashboard,
         deleteTracker,
+        editingTracker,
+        setEditingTracker,
       }}
     >
       {children}

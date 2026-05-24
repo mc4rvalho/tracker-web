@@ -1,15 +1,23 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable react-hooks/set-state-in-effect */
 import toast from "react-hot-toast";
 import { useModal } from "../contexts/ModalContext";
 import { TrackerForm } from "./TrackerForm";
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { api } from "../services/api";
 import { CircleX } from "lucide-react";
 import { useDashboard } from "../contexts/DashboardContext";
+import { useLocation } from "react-router-dom";
 
 export function AddTrackerModal() {
   const { isModalOpen, setIsModalOpen } = useModal();
-  const { loadDashboard, trackers, setTrackers } = useDashboard();
+  const {
+    loadDashboard,
+    trackers,
+    setTrackers,
+    editingTracker,
+    setEditingTracker,
+  } = useDashboard();
 
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("Series");
@@ -17,19 +25,44 @@ export function AddTrackerModal() {
   const [idInEdition, setIdEmEdicao] = useState<string | null>(null);
 
   const [episodesWatched, setEpisodesWatched] = useState<number | "">("");
-  const [totalEpisodesWatched, setTotalEpisodesWatched] = useState<number | "">(
-    "",
-  );
   const [hoursPlayed, setHoursPlayed] = useState<number | "">("");
-  const [totalHoursPlayed, setTotalHoursPlayed] = useState<number | "">("");
   const [readPages, setReadPages] = useState<number | "">("");
-  const [totalReadPages, setTotalReadPages] = useState<number | "">("");
 
   const [tags, setTags] = useState<string[]>([]);
   const [externalId, setExternalId] = useState<number | string>("");
 
   const [posterPath, setPosterPath] = useState("");
   const [search, setSearch] = useState<any[]>([]);
+
+  const location = useLocation();
+
+  useEffect(() => {
+    if (editingTracker) {
+      setIdEmEdicao(editingTracker.id);
+      setTitle(editingTracker.title);
+      setCategory(editingTracker.category);
+      setGrade(editingTracker.grade);
+
+      const trackerAny = editingTracker as any;
+      setExternalId(
+        trackerAny.tmdbId ||
+          trackerAny.rawgId ||
+          trackerAny.openLibraryId ||
+          "",
+      );
+    } else {
+      setIdEmEdicao(null);
+      setTitle("");
+
+      if (location.pathname === "/movies") setCategory("Movie");
+      else if (location.pathname === "/games") setCategory("Game");
+      else if (location.pathname === "/books") setCategory("Book");
+      else setCategory("Series");
+
+      setGrade("");
+      setExternalId("");
+    }
+  }, [editingTracker, location.pathname]);
 
   const saveTracker = async (e: FormEvent) => {
     e.preventDefault();
@@ -51,7 +84,6 @@ export function AddTrackerModal() {
           posterPath,
           tmdbId: Number(externalId),
           watchedEpisodes: Number(episodesWatched),
-          totalEpisodes: Number(totalEpisodesWatched),
           seasons: 1,
           seasonsWatched: 0,
         };
@@ -78,7 +110,6 @@ export function AddTrackerModal() {
           coverPath: posterPath,
           author: "Unknown",
           readPages: Number(readPages),
-          totalPages: Number(totalReadPages),
           openLibraryId: String(externalId),
         };
       }
@@ -104,15 +135,13 @@ export function AddTrackerModal() {
       setTags([]);
       setIdEmEdicao(null);
       setEpisodesWatched("");
-      setTotalEpisodesWatched("");
       setHoursPlayed("");
-      setTotalHoursPlayed("");
       setReadPages("");
-      setTotalReadPages("");
 
       loadDashboard();
 
       setIsModalOpen(false);
+      setEditingTracker(null);
 
       toast.success(
         idInEdition ? "Tracker updated!" : "Tracker created successfully!",
@@ -139,24 +168,22 @@ export function AddTrackerModal() {
           idInEdition={idInEdition}
           episodesWatched={episodesWatched}
           setEpisodesWatched={setEpisodesWatched}
-          totalEpisodesWatched={totalEpisodesWatched}
-          setTotalEpisodesWatched={setTotalEpisodesWatched}
           hoursPlayed={hoursPlayed}
           setHoursPlayed={setHoursPlayed}
-          totalHoursPlayed={totalHoursPlayed}
-          setTotalHoursPlayed={setTotalHoursPlayed}
           readPages={readPages}
           setReadPages={setReadPages}
-          totalReadPages={totalReadPages}
-          setTotalReadPages={setTotalReadPages}
           posterPath={posterPath}
           setPosterPath={setPosterPath}
           search={search}
           setSearch={setSearch}
           setExternalId={setExternalId}
+          currentPath={location.pathname}
         />
         <button
-          onClick={() => setIsModalOpen(false)}
+          onClick={() => {
+            setIsModalOpen(false);
+            setEditingTracker(null);
+          }}
           className="mt-4 flex items-center gap-2 rounded bg-red-500 px-4 py-2 text-white"
         >
           Fechar <CircleX size={20} />
