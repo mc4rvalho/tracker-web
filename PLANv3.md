@@ -55,12 +55,12 @@ Version 3.0 transforms the project from a passive CRUD application into an activ
 **Focus:** The user no longer types totals. The system displays dynamic progress and allows quick-click updates.
 
 - **Branch:** `feat/smart-form-cleanup`
-  - [ ] Implement Global Modal Edit Mode (Context, Trigger e AutoComplete).
-  - [ ] Remove "Total Episodes", "Total Hours", and "Total Pages" inputs from `<TrackerForm />` (Back-end handles this now).
-  - [ ] Hide category selection if the user opens the Modal from a specific route (e.g., auto-select "Game" if on `/games`).
+  - [x] Implement Global Modal Edit Mode (Context, Trigger e AutoComplete).
+  - [x] Remove "Total Episodes", "Total Hours", and "Total Pages" inputs from `<TrackerForm />` (Back-end handles this now).
+  - [x] Hide category selection if the user opens the Modal from a specific route (e.g., auto-select "Game" if on `/games`).
 - **Branch:** `feat/quick-update-buttons`
-  - [ ] Add "+1 Episode" or "+10 Pages" quick buttons directly on the `TrackerList` cards.
-  - [ ] Trigger silent `PATCH` requests and show success Toasts.
+  - [x] Add "+1 Episode" or "+10 Pages" quick buttons directly on the `TrackerList` cards.
+  - [x] Trigger silent `PATCH` requests and show success Toasts.
 - **Branch:** `feat/completion-review-modal`
   - [ ] Add trigger: If `watched === total`, auto-change status to `FINISHED`.
   - [ ] Open a "Congratulations!" mini-modal asking for the Final Rating and Text Review.

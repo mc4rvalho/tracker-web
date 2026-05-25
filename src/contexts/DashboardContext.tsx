@@ -20,6 +20,7 @@ interface DashboardContextData {
   deleteTracker: (id: string) => Promise<void>;
   editingTracker: ITracker | null;
   setEditingTracker: React.Dispatch<React.SetStateAction<ITracker | null>>;
+  quickUpdateProgress: (tracker: ITracker) => Promise<void>;
 }
 
 const DashboardContext = createContext<DashboardContextData>(
@@ -88,17 +89,17 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
       return;
 
     try {
-      const trackerAlvo = trackers.find((t) => t.id === id);
-      if (!trackerAlvo) return;
+      const targetTracker = trackers.find((t) => t.id === id);
+      if (!targetTracker) return;
 
       let route = "";
-      if (trackerAlvo.category === "Series") {
+      if (targetTracker.category === "Series") {
         route = "/series";
-      } else if (trackerAlvo.category === "Movie") {
+      } else if (targetTracker.category === "Movie") {
         route = "/movies";
-      } else if (trackerAlvo.category === "Game") {
+      } else if (targetTracker.category === "Game") {
         route = "/games";
-      } else if (trackerAlvo.category === "Book") {
+      } else if (targetTracker.category === "Book") {
         route = "/books";
       }
 
@@ -115,6 +116,53 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const quickUpdateProgress = async (tracker: ITracker) => {
+    let route = "";
+    let payload = {};
+    let newValue = 0;
+
+    try {
+      if (tracker.category === "Series") {
+        route = `/series/${tracker.id}`;
+        newValue = (tracker.episodesWatched || 0) + 1;
+        payload = { watchedEpisodes: newValue };
+      } else if (tracker.category === "Game") {
+        route = `/games/${tracker.id}`; // Corrigido para plural
+        newValue = (tracker.hoursPlayed || 0) + 1;
+        payload = { hoursPlayed: newValue };
+      } else if (tracker.category === "Book") {
+        route = `/books/${tracker.id}`; // Corrigido para plural
+        newValue = (tracker.readPages || 0) + 10;
+        payload = { readPages: newValue };
+      }
+
+      // Dispara a requisição real no Back-end
+      await api.patch(route, payload);
+
+      // Atualiza a tela instantaneamente (Optimistic UI)
+      setTrackers(
+        trackers.map((t) => {
+          if (t.id === tracker.id) {
+            if (tracker.category === "Series")
+              return { ...t, episodesWatched: newValue };
+            if (tracker.category === "Game")
+              return { ...t, hoursPlayed: newValue };
+            if (tracker.category === "Book")
+              return { ...t, readPages: newValue };
+          }
+          return t;
+        }),
+      );
+
+      toast.success(`Progress Updated!`);
+      // loadDashboard() no fundo para atualizar os gráficos sem piscar a tela toda
+      loadDashboard();
+    } catch (error) {
+      console.error(`Error updating progress:`, error);
+      toast.error("Failed to update progress.");
+    }
+  };
+
   return (
     <DashboardContext.Provider
       value={{
@@ -127,6 +175,7 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
         deleteTracker,
         editingTracker,
         setEditingTracker,
+        quickUpdateProgress,
       }}
     >
       {children}

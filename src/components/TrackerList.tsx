@@ -1,5 +1,6 @@
-import type { ITracker } from "../types/tracker.interface";
 import { ProgressBar } from "./ProgressBar";
+import { useDashboard } from "../contexts/DashboardContext";
+import type { ITracker } from "../types/tracker.interface";
 
 interface ListProps {
   trackers: ITracker[];
@@ -21,6 +22,8 @@ export const TrackerList = ({
   prepareEdition,
   deleteTracker,
 }: ListProps) => {
+  const { quickUpdateProgress } = useDashboard();
+
   if (trackers.length === 0) {
     return (
       <p className="py-4 text-center text-gray-500">
@@ -69,13 +72,27 @@ export const TrackerList = ({
             </div>
           </div>
 
-          {/* BLOCO CONDICIONAL DA Series */}
+          {/* BLOCO CONDICIONAL DA SERIES */}
           {tracker.category === "Series" && tracker.totalEpisodesWatched && (
             <div className="mt-3 w-full">
-              <p className="mb-1 text-xs text-gray-500">
-                Progress: {tracker.episodesWatched} de{" "}
-                {tracker.totalEpisodesWatched}
-              </p>
+              <div className="mb-1 flex items-center justify-between">
+                <p className="text-xs text-gray-500">
+                  Progress: {tracker.episodesWatched} de{" "}
+                  {tracker.totalEpisodesWatched}
+                </p>
+                {(tracker.episodesWatched || 0) <
+                  tracker.totalEpisodesWatched && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      quickUpdateProgress(tracker);
+                    }}
+                    className="rounded bg-blue-100 px-2 py-0.5 text-xs font-bold text-blue-700 hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-400"
+                  >
+                    +1 Ep
+                  </button>
+                )}
+              </div>
               <ProgressBar
                 current={tracker.episodesWatched || 0}
                 total={tracker.totalEpisodesWatched}
@@ -87,9 +104,22 @@ export const TrackerList = ({
           {/* BLOCO CONDICIONAL DO GAME */}
           {tracker.category === "Game" && tracker.totalHoursPlayed && (
             <div className="mt-3 w-full">
-              <p className="mb-1 text-xs text-gray-500">
-                Progress: {tracker.hoursPlayed} de {tracker.totalHoursPlayed}
-              </p>
+              <div className="mb-1 flex items-center justify-between">
+                <p className="text-xs text-gray-500">
+                  Progress: {tracker.hoursPlayed} de {tracker.totalHoursPlayed}
+                </p>
+                {(tracker.hoursPlayed || 0) < tracker.totalHoursPlayed && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      quickUpdateProgress(tracker);
+                    }}
+                    className="rounded bg-purple-100 px-2 py-0.5 text-xs font-bold text-purple-700 hover:bg-purple-200 dark:bg-purple-900/30 dark:text-purple-400"
+                  >
+                    +1 Hr
+                  </button>
+                )}
+              </div>
               <ProgressBar
                 current={tracker.hoursPlayed || 0}
                 total={tracker.totalHoursPlayed}
@@ -101,9 +131,22 @@ export const TrackerList = ({
           {/* BLOCO CONDICIONAL DO BOOK */}
           {tracker.category === "Book" && tracker.totalReadPages && (
             <div className="mt-3 w-full">
-              <p className="mb-1 text-xs text-gray-500">
-                Progress: {tracker.readPages} de {tracker.totalReadPages}
-              </p>
+              <div className="mb-1 flex items-center justify-between">
+                <p className="text-xs text-gray-500">
+                  Progress: {tracker.readPages} de {tracker.totalReadPages}
+                </p>
+                {(tracker.readPages || 0) < tracker.totalReadPages && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      quickUpdateProgress(tracker);
+                    }}
+                    className="rounded bg-emerald-100 px-2 py-0.5 text-xs font-bold text-emerald-700 hover:bg-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-400"
+                  >
+                    +10 Pgs
+                  </button>
+                )}
+              </div>
               <ProgressBar
                 current={tracker.readPages || 0}
                 total={tracker.totalReadPages}
