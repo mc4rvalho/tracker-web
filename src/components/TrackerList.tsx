@@ -1,6 +1,6 @@
-import { ProgressBar } from "./ProgressBar";
 import { useDashboard } from "../contexts/DashboardContext";
 import type { ITracker } from "../types/tracker.interface";
+import { ProgressBar } from "./ProgressBar";
 
 interface ListProps {
   trackers: ITracker[];
@@ -73,15 +73,16 @@ export const TrackerList = ({
           </div>
 
           {/* BLOCO CONDICIONAL DA SERIES */}
-          {tracker.category === "Series" && tracker.totalEpisodesWatched && (
+          {tracker.category === "Series" && (
             <div className="mt-3 w-full">
               <div className="mb-1 flex items-center justify-between">
                 <p className="text-xs text-gray-500">
-                  Progress: {tracker.episodesWatched} de{" "}
-                  {tracker.totalEpisodesWatched}
+                  Progress: {tracker.episodesWatched || 0} de{" "}
+                  {tracker.totalEpisodesWatched || "?"}
                 </p>
-                {(tracker.episodesWatched || 0) <
-                  tracker.totalEpisodesWatched && (
+                {(!tracker.totalEpisodesWatched ||
+                  (tracker.episodesWatched || 0) <
+                    tracker.totalEpisodesWatched) && (
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
@@ -95,20 +96,22 @@ export const TrackerList = ({
               </div>
               <ProgressBar
                 current={tracker.episodesWatched || 0}
-                total={tracker.totalEpisodesWatched}
+                total={tracker.totalEpisodesWatched || 0}
                 color="bg-blue-500"
               />
             </div>
           )}
 
           {/* BLOCO CONDICIONAL DO GAME */}
-          {tracker.category === "Game" && tracker.totalHoursPlayed && (
+          {tracker.category === "Game" && (
             <div className="mt-3 w-full">
               <div className="mb-1 flex items-center justify-between">
                 <p className="text-xs text-gray-500">
-                  Progress: {tracker.hoursPlayed} de {tracker.totalHoursPlayed}
+                  Progress: {tracker.hoursPlayed || 0} de{" "}
+                  {tracker.totalHoursPlayed || "?"}
                 </p>
-                {(tracker.hoursPlayed || 0) < tracker.totalHoursPlayed && (
+                {(!tracker.totalHoursPlayed ||
+                  (tracker.hoursPlayed || 0) < tracker.totalHoursPlayed) && (
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
@@ -122,20 +125,22 @@ export const TrackerList = ({
               </div>
               <ProgressBar
                 current={tracker.hoursPlayed || 0}
-                total={tracker.totalHoursPlayed}
+                total={tracker.totalHoursPlayed || 0}
                 color="bg-red-500"
               />
             </div>
           )}
 
           {/* BLOCO CONDICIONAL DO BOOK */}
-          {tracker.category === "Book" && tracker.totalReadPages && (
+          {tracker.category === "Book" && (
             <div className="mt-3 w-full">
               <div className="mb-1 flex items-center justify-between">
                 <p className="text-xs text-gray-500">
-                  Progress: {tracker.readPages} de {tracker.totalReadPages}
+                  Progress: {tracker.readPages || 0} de{" "}
+                  {tracker.totalReadPages || "?"}
                 </p>
-                {(tracker.readPages || 0) < tracker.totalReadPages && (
+                {(!tracker.totalReadPages ||
+                  (tracker.readPages || 0) < tracker.totalReadPages) && (
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
@@ -149,7 +154,7 @@ export const TrackerList = ({
               </div>
               <ProgressBar
                 current={tracker.readPages || 0}
-                total={tracker.totalReadPages}
+                total={tracker.totalReadPages || 0}
                 color="bg-green-500"
               />
             </div>
